@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2016.3 (Build 650U)" ts="2016-06-30 13:48:57">
+<Class name="REST.Broker">
+<Super>%CSP.REST</Super>
+<TimeChanged>63637,66275.66896</TimeChanged>
+<TimeCreated>63034,38587.500734</TimeCreated>
+
+<XData name="UrlMap">
+<Data><![CDATA[
+<Routes>
+  <Route Url="/jqueryjson" Method="GET" Call="REST.JSON:GetColors"/>
+  <Route Url="/test" Method="GET" Call="Test"/>
+  <Route Url="/companies" Method="GET" Call="REST.HTML:GetCompanies"/>
+  <Route Url="/orders/:compid" Method="GET" Call="REST.HTML:GetOrders"/>
+  <Route Url="/JSON/companies" Method="GET" Call="REST.JSON:GetAllCompanies"/>
+  <Route Url="/JSON/company/:compid" Method="PUT" Call="REST.JSON:UpdateCompany"/>
+  <Route Url="/JSON/company/:compid" Method="DELETE" Call="REST.JSON:DeleteCompany"/>
+  <Route Url="/JSON/company" Method="POST" Call="REST.JSON:CreateCompany"/>
+  <Route Url="/XML/companies" Method="GET" Call="REST.XML:GetAllCompanies"/>
+  <Route Url="/XML/company/:compid" Method="GET" Call="REST.XML:GetCompany"/>
+  <Route Url="/getuserandtotal" Method="GET" Call="PM.REST:GetNameAndTotal"/>
+  <Route Url="/getactivities" Method="GET" Call="PM.REST:GetActivities"/>
+  <Route Url="/testp" Method="GET" Call="Testp"/>
+</Routes>
+]]></Data>
+</XData>
+
+<Method name="Test">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	&html<IT WORKS!>
+	quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="Testp">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Write %request.Data("callback",1)
+  	write "("
+  	//write 123
+  	write "{""name"": ""羽生善治"",""age"": 40,""titles"": [""王座"",""棋聖""],""married"": true}"
+  	write ")"
+	quit $$$OK
+]]></Implementation>
+</Method>
+</Class>
+
+
+<CSP name="pmofficeapi.CSP" application="/csp/user/" default="1"><![CDATA[
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-1.9.0.min.js"></script>
+    <script src="https://appsforoffice.microsoft.com/lib/1.0/hosted/office.js"></script>
+    <script type="text/javascript">
+    Office.initialize = function (reason) {
+      $(document).ready(function () {
+          var docUrl = 'http://localhost:57772/rest/getactivities';
+          $.ajax({
+            url : docUrl,
+            dataType : 'jsonp',
+            jsonp : 'callback',
+            beforeSend:function(xhr){
+              $('#msgline').html('getting from Cache ...');
+            },
+            success : function(data, status){
+	            	            
+                Office.context.document.bindings.addFromNamedItemAsync("Sheet1!Name","text",{id:"myName"}, function (result) {
+
+                        if (result.status == "succeeded"){
+
+                            $('#msgline').html('Nameバインドを追加しました。:');
+                            write("バインドを追加しました。:" + result.value.id + " , Type:" + result.value.type);
+
+                        } else {
+
+                            $('#msgline').html('Nameバインドをエラー:');
+                            write("エラーが発生しました。:" + result.error.message);
+
+                        }
+
+                });
+
+                Office.context.document.bindings.addFromNamedItemAsync("Sheet1!TotalHours","text",{id:"TotalHours"}, function (result) {
+
+                        if (result.status == "succeeded"){
+
+                            $('#msgline').html('TotalHoursバインドを追加しました。:');
+                            write("バインドを追加しました。:" + result.value.id + " , Type:" + result.value.type);
+
+                        } else {
+
+                            $('#msgline').html('TotalHoursバインドをエラー:');
+                            write("エラーが発生しました。:" + result.error.message);
+
+                        }
+
+                });
+
+                Office.context.document.bindings.addFromNamedItemAsync("Sheet1!ActivityRecords","matrix",{id:"ActivityRecords"}, function (result) {
+
+                        if (result.status == "succeeded"){
+
+                            $('#msgline').html('ActivityRecordsバインドを追加しました。:');
+                            write("バインドを追加しました。:" + result.value.id + " , Type:" + result.value.type);
+
+                        } else {
+
+                            $('#msgline').html('ActivityRecordsバインドをエラー:');
+                            write("エラーが発生しました。:" + result.error.message);
+
+                        }
+
+                });
+
+                Office.select("bindings#myName").setDataAsync(data[0].children[0].NAME, {coercionType:"text"}, function (result) {
+
+                        if (result.status == "failed") {
+
+                            $('#msgline').html('setDataAscyncエラー:');
+                            write("エラーが発生しました。:" + result.error.message);
+
+                        }
+                });
+
+                Office.select("bindings#TotalHours").setDataAsync(data[0].children[0].TOTALHOURS, {coercionType:"text"}, function (result) {
+
+                        if (result.status == "failed") {
+
+                            $('#msgline').html('setDataAscyncエラー:');
+                            write("エラーが発生しました。:" + result.error.message);
+
+                        }
+                });
+
+                Office.select("bindings#ActivityRecords").setDataAsync(data[1].children, {coercionType:"matrix"}, function (result) {
+
+                        if (result.status == "failed") {
+
+                            $('#msgline').html('setDataAscyncエラー:');
+                            write("エラーが発生しました。:" + result.error.message);
+
+                        }
+                });
+
+            },
+            error : function(){
+              $('#msgline').html('原因不明エラー');
+            }
+
+          });
+        });
+    };
+    </script>
+  </head>
+  <body>
+    <div style="font-weight:bold">Cache Data Picker</div>
+    <p id="msgline" style="background-color:gray;">initializing ...</p>
+  </body>
+</html>]]></CSP>
+</Export>

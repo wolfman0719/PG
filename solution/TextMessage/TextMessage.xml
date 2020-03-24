@@ -1,0 +1,572 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2016.2 (Build 730U)" ts="2016-09-30 15:54:29">
+<Class name="Util.CommonMessages">
+<Super>%Persistent,%ZEN.DataModel.Adaptor</Super>
+<TimeChanged>64191,50261.08509</TimeChanged>
+<TimeCreated>63432,39867.368313</TimeCreated>
+
+<Property name="EnglishText">
+<Type>%String</Type>
+<Parameter name="COLLATION" value="TRUNCATE"/>
+<Parameter name="MAXLEN" value="1000"/>
+</Property>
+
+<Property name="JapaneseText">
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="1000"/>
+</Property>
+
+<Index name="EngishIndex">
+<Properties>EnglishText:TRUNCATE(50)</Properties>
+</Index>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Util.CommonMessagesD</DataLocation>
+<DefaultData>CommonMessagesDefaultData</DefaultData>
+<IdLocation>^Util.CommonMessagesD</IdLocation>
+<IndexLocation>^Util.CommonMessagesI</IndexLocation>
+<StreamLocation>^Util.CommonMessagesS</StreamLocation>
+<Data name="CommonMessagesDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>EnglishText</Value>
+</Value>
+<Value name="3">
+<Value>JapaneseText</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="Util.MessageForm">
+<Description>
+</Description>
+<ProcedureBlock>1</ProcedureBlock>
+<Super>%ZEN.Component.page</Super>
+<TimeChanged>63432,44424.246092</TimeChanged>
+<TimeCreated>63432,43133.199013</TimeCreated>
+
+<Parameter name="APPLICATION">
+</Parameter>
+
+<Parameter name="CSSINCLUDES">
+</Parameter>
+
+<Parameter name="DOMAIN">
+<Default>MessageForm</Default>
+</Parameter>
+
+<Parameter name="PAGENAME">
+<Default>Util.MessageForm</Default>
+</Parameter>
+
+<Property name="MyId">
+<Type>%Integer</Type>
+</Property>
+
+<Method name="%OnGetJSResources">
+<FormalSpec><![CDATA[&pResources:%String]]></FormalSpec>
+<Private>1</Private>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+ Set pResources("SuccessSaveRecord") = $$$Text("Record saved.")
+ Set pResources("NothingRecord") = $$$Text("Enter an ID value. To view a list of IDs click Search.")
+ Set pResources("NoExistRecord") = $$$Text("No record with this ID exists. To view a list of valid IDs click Search.") 
+ Set pResources("ConfirmDelete") = $$$Text("Are you sure you want to delete this record? You cannot undo this operation.") 
+ Set pResources("FailedDelete") = $$$Text("Record was not deleted.") 
+ Set pResources("SuccessDelete") = $$$Text("Record deleted.") 
+ Set pResources("LabelHide") = $$$Text("Hide")
+ Set pResources("LabelTitleHide") = $$$Text("Hide display of current records")
+ Set pResources("LabelSearch") = $$$Text("Search")
+ Set pResources("LabelTitleHide") = $$$Text("Find all records")
+ Set pResources("FailedDataValidation") = $$$Text("Some data was incorrect or incomplete. Please try again. To view tips for entering the correct data format for a field, hover the cursor over the field (or its title) and wait for a tooltip to display"_ $c(13,10,13,10)) 
+ 
+ Set pResources("FailedStringEnglishText") = $$$Text("EnglishText was too short or too long."_$c(13,10))
+ Set pResources("FailedStringJapaneseText") = $$$Text("JapaneseText was too short or too long."_$c(13,10))
+ 
+ Quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="ModelIdExists">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>modelId:%String</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<ZenMethod>1</ZenMethod>
+<Implementation><![CDATA[
+ if ($classmethod("Util.CommonMessages","%ExistsId",modelId)) {
+  Quit 1
+ }
+ else {
+  Quit 0
+ }
+]]></Implementation>
+</Method>
+
+<Method name="deleteRec">
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var id = zen('ID');
+ var val = id.getValue();
+ if (val.length <= 0) {
+  alert(zenText('NothingRecord'));
+  return false;
+ }
+ if (zenPage.ModelIdExists(val) == 0) {
+  alert(zenText('NoExistRecord'));
+  return false;
+ }
+ if (confirm(zenText('ConfirmDelete'))) {
+  var controller = zen('mvc');
+  controller.deleteId(controller.getModelId());
+  controller.createNewObject();
+  controller.update();
+  if (id.setValue('') == false) {
+ 	 alert(zenText('FailedDelete'));
+ 	 return false;
+  }
+  alert(zenText('SuccessDelete'));
+  return false;
+ }
+ else {
+  alert(zenText('FailedDelete'));
+  return false;
+ }
+]]></Implementation>
+</Method>
+
+<Method name="getRecord">
+<FormalSpec>id:%Integer</FormalSpec>
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var controller = zen('mvc');
+ controller.setModelId(id);
+ var idText = id.toString();
+ zenPage.MyId = idText;
+ var id = zen('ID');
+ id.setValue(idText);
+]]></Implementation>
+</Method>
+
+<Method name="hideSearchTable">
+<Description>
+Hide the table of records on the form.</Description>
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var tab = zen('searchTable');
+ tab.setHidden(true); 
+ var btn = zen('btnSearch'); 
+ btn.caption = zenText('LabelSearch'); 
+ btn.title = zenText('LabelTitleSearch');
+ zenPage.refreshContents();
+]]></Implementation>
+</Method>
+
+<Method name="newRec">
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var id = zen('ID');
+ id.setValue('');
+ var controller = zen('mvc');
+ controller.createNewObject();
+]]></Implementation>
+</Method>
+
+<Method name="refreshSearchTable">
+<Description>
+Refresh the table of records on the form.</Description>
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var tab = zen('searchTable');
+ if (tab.hidden == false) { 
+   tab.executeQuery(); 
+ }
+]]></Implementation>
+</Method>
+
+<Method name="saveRec">
+<FormalSpec>ok</FormalSpec>
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ if (ok == true) {
+  var form=zen('MessageForm');
+  var save=form.save();
+  if (save.length == 0) ok = false;
+  else var cls=zen('mvc').getModelClass();
+ }
+ if (ok == true) alert(zenText('SuccessSaveRecord'));
+ else alert(zenText('FailedDataValidation'));
+ return ok;
+]]></Implementation>
+</Method>
+
+<Method name="toggleSearchTable">
+<Description>
+Display the table of records on the form.</Description>
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var tab = zen('searchTable');
+ if (tab.hidden == true) { 
+  tab.setHidden(false); 
+  var btn = zen('btnSearch'); 
+  btn.caption = zenText('LabelHide');
+  btn.title = zenText('LabelTitleHide'); 
+  tab.executeQuery(); 
+  zenPage.refreshContents(); 
+ } 
+ else { 
+  zenPage.hideSearchTable(); 
+ }
+]]></Implementation>
+</Method>
+
+<Method name="validateAndSave">
+<Description>
+Refresh the table of records on the form.</Description>
+<Language>javascript</Language>
+<ReturnType>%String</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var msg = '';
+ if ((zen('EnglishText').getValue().length > 0) && (zenPage.validateString('EnglishText',false,0,true,1000) == false))
+  msg += zenText('FailedStringEnglishText');
+ if ((zen('JapaneseText').getValue().length > 0) && (zenPage.validateString('JapaneseText',false,0,true,1000) == false))
+  msg += zenText('FailedStringJapaneseText');
+ if (msg.length == 0) zenPage.saveRec(true);
+ else alert(zenText('FailedDataValidation') + msg);
+]]></Implementation>
+</Method>
+
+<Method name="validateDate">
+<FormalSpec>fname:%String</FormalSpec>
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[ return zenPage.validateDateField(zen(fname).getValue());
+]]></Implementation>
+</Method>
+
+<Method name="validateDateField">
+<FormalSpec>field:%String</FormalSpec>
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var len = field.length;
+ if (len < 10) return false;
+ if (field.charAt(4) != '-') return false;
+ if (field.charAt(7) != '-') return false;
+ var part = field.split('-');
+ if (part.length != 3) return false;
+ if (zenPage.validateYear(part[0]) == false) return false;
+ if (zenPage.validateMonthDay(part[1],part[2]) == false) return false;
+ return true;
+]]></Implementation>
+</Method>
+
+<Method name="validateDecimal">
+<FormalSpec>fname:%String</FormalSpec>
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var field = (zen(fname)).getValue();
+ var part = field.split('.');
+ var len = part.length;
+ if ((len <= 0) || (part.length > 2)) return false;
+ for (i = 0; i < len; i++) {
+ 	 if (isNaN(part[i])) return false;
+ }
+ return true;
+]]></Implementation>
+</Method>
+
+<Method name="validateHour">
+<FormalSpec>field:%String</FormalSpec>
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var val = parseInt(field); 
+ return ((val >= 0) && (val <= 23));
+]]></Implementation>
+</Method>
+
+<Method name="validateInteger">
+<FormalSpec>fname:%String,haveMin:%Boolean,min:%Integer,haveMax:%Boolean,max:%Integer</FormalSpec>
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var field = (zen(fname)).getValue(); 
+ if (isNaN(field)) return false; 
+ if ((haveMin == true) && (field < min)) return false; 
+ if ((haveMax == true) && (field > max)) return false; 
+ return true;
+]]></Implementation>
+</Method>
+
+<Method name="validateMinute">
+<FormalSpec>field:%String</FormalSpec>
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var val = parseInt(field); 
+ return ((val >= 0) && (val <= 59));
+]]></Implementation>
+</Method>
+
+<Method name="validateMonthDay">
+<FormalSpec>field1:%String,field2:%String</FormalSpec>
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var m = parseInt(field1);
+ var d = parseInt(field2);
+ if ((m >= 1) && (m <= 12) && (d >= 1) && (d <= 31)) {
+	 if ((m == 4) || (m == 6) || (m == 9) || (m == 11)) {
+		 if (d <= 30) return true;
+	 }
+	 else if (m == 2) {
+		 if (d <= 29) return true;
+	 }
+	 else return true;
+ }
+ return false;
+]]></Implementation>
+</Method>
+
+<Method name="validateRequired">
+<FormalSpec>fname:%String</FormalSpec>
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var field = (zen(fname)).getValue();
+ if (field.length == 0) return false;
+ else return true;
+]]></Implementation>
+</Method>
+
+<Method name="validateString">
+<FormalSpec>fname:%String,haveMin:%Boolean,min:%Integer,haveMax:%Boolean,max:%Integer</FormalSpec>
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var field = (zen(fname)).getValue(); 
+ var len = field.length; 
+ if ((haveMin == true) && (len < min)) return false; 
+ if ((haveMax == true) && (len > max)) return false; 
+ else return true;
+]]></Implementation>
+</Method>
+
+<Method name="validateTime">
+<FormalSpec>fname:%String</FormalSpec>
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[  return zenPage.validateTimeField(zen(fname).getValue());
+]]></Implementation>
+</Method>
+
+<Method name="validateTimeField">
+<FormalSpec>field:%String</FormalSpec>
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var len = field.length;
+ if (len < 8) return false;
+ if (field.charAt(2) != ':') return false;
+ if (field.charAt(5) != ':') return false;
+ var part = field.split(':');
+ if (part.length != 3) return false;
+ if (zenPage.validateHour(part[0]) == false) return false;
+ if (zenPage.validateMinute(part[1]) == false) return false;
+ if (zenPage.validateMinute(part[2]) == false) return false;
+ return true;
+]]></Implementation>
+</Method>
+
+<Method name="validateTimeStamp">
+<FormalSpec>fname:%String</FormalSpec>
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var field = zen(fname).getValue();
+ var len = field.length;
+ if (len < 18) return false;
+ var part = field.split(' ');
+ if (part.length != 2) return false;
+ if (zenPage.validateDateField(part[0]) == false) return false;
+ if (zenPage.validateTimeField(part[1]) == false) return false;
+ return true;
+]]></Implementation>
+</Method>
+
+<Method name="validateYear">
+<FormalSpec>field:%String</FormalSpec>
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var val = parseInt(field); 
+ return ((val >= 0) && (val <= 9999));
+]]></Implementation>
+</Method>
+
+<Method name="viewRec">
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var id = zen('ID');
+ var val = id.getValue();
+ if (val.length <= 0) {
+  alert(zenText('NothingRecord'));
+  return false;
+ }
+ if (zenPage.ModelIdExists(val) == 0) {
+  alert(zenText('NoExistRecord'));
+  return false;
+ }
+]]></Implementation>
+</Method>
+
+<XData name="Contents">
+<XMLNamespace>http://www.intersystems.com/zen</XMLNamespace>
+<Data><![CDATA[
+<page xmlns="http://www.intersystems.com/zen" title="メッセージ編集" >
+<dataController id="mvc" modelClass="Util.CommonMessages" modelId="" />
+<form controllerId="mvc" id="MessageForm" width="100%" >
+<spacer height="10" />
+<vgroup align="left" valign="top" labelPosition="left" >
+<hgroup>
+<button id="btnNew" caption="New" title="Clear all fields so that you can create a new record" onclick="zenPage.newRec();"/>
+<button id="btnView" caption="View" title="To edit or delete a record, enter the number in the ID field, then click this button" onclick="zenPage.viewRec();"/>
+<button id="btnSave" caption="Save" title="Save the record currently in view" onclick="zenPage.validateAndSave(); zenPage.refreshSearchTable();"/>
+<button id="btnDelete" caption="Delete" title="Delete the record currently in view" onclick="zenPage.deleteRec(); zenPage.refreshSearchTable();" />
+<button id="btnSearch" caption="Search" title="Find all records" onclick="zenPage.toggleSearchTable();" />
+</hgroup>
+<spacer height="10" />
+ <text label="(System Assigned) ID" id="ID" title="System assigned identifier. Do not edit when creating a new record." size="10" value="#(%page.MyId)#" height="23" onblur="zenPage.getRecord(zenThis.getValue());" />
+<textarea id="EnglishText" label="EnglishText" title="Up to 1000 characters. " cols="50" rows="5" dataBinding="EnglishText" />
+<textarea id="JapaneseText" label="JapaneseText" title="Up to 1000 characters. " cols="50" rows="5" dataBinding="JapaneseText" />
+   <spacer height="20" />
+   <tablePane id="searchTable" hidden="true" maxRows="50" sql="SELECT * FROM Util.CommonMessages ORDER BY ID" >
+     <column colName="ID" link="javascript:zenPage.getRecord(#(%query.ID)#);" />
+   </tablePane>
+   <spacer height="10" />
+  </vgroup>
+ </form>
+</page>
+]]></Data>
+</XData>
+
+<XData name="Style">
+<Data><![CDATA[
+<style type="text/css">
+</style>
+]]></Data>
+</XData>
+</Class>
+
+
+<Class name="Util.MessageSetup">
+<Super>%Base</Super>
+<TimeChanged>63432,61840.953725</TimeChanged>
+<TimeCreated>63432,41020.772601</TimeCreated>
+
+<Method name="BuildCommonMessages">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pDomainName:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set tNode = ""
+	Set tLang = "en"
+	For {
+		Set tNode = $Order(^CacheMsg(pDomainName,tLang,tNode))
+		If tNode = "" Quit
+		Set tMessage = ##class(Util.CommonMessages).%New()
+		Set tMessage.EnglishText = ^CacheMsg(pDomainName,tLang,tNode)
+		set tSC = tMessage.%Save()
+	}
+	Quit tSC
+]]></Implementation>
+</Method>
+
+<Method name="GenerateJapaneseMessages">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pDomainName:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set tNode = ""
+	Set tJLang = "ja"
+	Set tLang = "en"
+	Set ^CacheMsg(pDomainName) = tLang
+	If '$Data(^CacheMsg(pDomainName,tLang)) {
+	   Merge ^CacheMsg(pDomainName,tLang) = ^CacheMsg(pDomainName,tJLang)
+	}
+	Set tSC = $$$OK
+	For {
+		Set tNode = $Order(^CacheMsg(pDomainName,tJLang,tNode))
+		If tNode = "" Quit
+		Set tText = ^CacheMsg(pDomainName,tJLang,tNode)
+		Set tQuery = "select EnglishText,JapaneseText from Util.CommonMessages where EnglishText = ?"
+        Set tStatement = ##class(%SQL.Statement).%New(1)
+        Set qStatus = tStatement.%Prepare(.tQuery)
+        If qStatus'=$$$OK { Write "%Prepare 失敗",$System.Status.DisplayError(qStatus) QUIT}
+        Set tResultSet = tStatement.%Execute(tText)
+        If tResultSet.%SQLCODE=0 { }
+        ElseIf tResultSet.%SQLCODE=100 {
+	        Write "新しいメッセージ　",tText,!
+	        Set NewCommonMessage = ##class(Util.CommonMessages).%New()  
+            Set NewCommonMessage.EnglishText = tText
+            Set tSC = NewCommonMessage.%Save() 
+        }
+        ElseIf tResultSet.%SQLCODE=-361 { Write !,"クエリーが作成済: ",tResultSet.%Message,! }
+        Else { Write !,"クエリー作成エラー: ",tResultSet.%SQLCODE," ",tResultSet.%Message   QUIT}
+        Set tNotFindFlag = 1
+        While tResultSet.%Next() {
+           If (tResultSet.EnglishText = tText) {
+	           Set ^CacheMsg(pDomainName,tJLang,tNode) = tResultSet.JapaneseText
+	           Set tNotFindFlag = 0
+           }
+        }
+        If tNotFindFlag {
+	        If (tText ? .ACPN) {
+	          Write "新しいメッセージ　",tText,!
+	          Set NewCommonMessage = ##class(Util.CommonMessages).%New()  
+              Set NewCommonMessage.EnglishText = tText
+              Set tSC = NewCommonMessage.%Save()
+	        } 
+        }  
+	}
+	Quit tSC
+]]></Implementation>
+</Method>
+</Class>
+</Export>

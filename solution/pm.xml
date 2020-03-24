@@ -1,0 +1,3749 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2016.2 (Build 730U)" ts="2016-09-30 15:48:45">
+<Class name="PM.Activity">
+<Super>%Persistent,%Populate,%XML.Adaptor</Super>
+<TimeChanged>63517,52401.309139</TimeChanged>
+<TimeCreated>63427,66307.668607</TimeCreated>
+
+<UDLText name="T">
+<Content><![CDATA[
+/******************************************************************************
+Id:  PM.Activity.cls#1
+説明： プロジェクトのアクティビティ
+******************************************************************************/
+]]></Content>
+</UDLText>
+
+<Property name="Week">
+<Description>
+何週目の作業か　1-52</Description>
+<Type>%Integer</Type>
+</Property>
+
+<Property name="Year">
+<Description>
+年</Description>
+<Type>%Integer</Type>
+</Property>
+
+<Property name="Hours">
+<Description>
+作業時間</Description>
+<Type>%Integer</Type>
+</Property>
+
+<Property name="Phase">
+<Description>
+プロジェクトのフェーズ</Description>
+<Type>PM.Phase</Type>
+</Property>
+
+<Property name="Project">
+<Description>
+どのプロジェクトのアクティビティかを表す</Description>
+<Type>PM.Project</Type>
+<Cardinality>one</Cardinality>
+<Inverse>Activities</Inverse>
+<Relationship>1</Relationship>
+</Property>
+
+<Index name="ProjectIndex">
+<Description>
+プロジェクト・リレーションシップ用インデックス</Description>
+<Properties>Project</Properties>
+</Index>
+
+<Property name="Member">
+<Description>
+誰の作業かを表す</Description>
+<Type>PM.Person</Type>
+<Cardinality>one</Cardinality>
+<Inverse>Activities</Inverse>
+<Relationship>1</Relationship>
+</Property>
+
+<Index name="MemberIndex">
+<Description>
+メンバー・リレーションシップ用インデックス</Description>
+<Properties>Member</Properties>
+</Index>
+
+<Index name="WeekIndex">
+<Properties>Week</Properties>
+</Index>
+
+<Index name="PhaseIndex">
+<Properties>Phase</Properties>
+</Index>
+
+<Index name="YearIndex">
+<Properties>Year</Properties>
+</Index>
+
+<Index name="UniqueKey">
+<Properties>Member,Phase,Project,Week,Year</Properties>
+<Unique>1</Unique>
+</Index>
+
+<Method name="ExportXML">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pFile:%String,pId:%Integer</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	set tSC = $$$OK
+
+	Try {
+		
+ 	Set File = ##class(%Stream.FileCharacter).%New()
+ 	Set File.Filename = pFile
+ 	//Do File.FilenameSet(pFile)
+	Do File.TranslateTableSet("UTF8")
+	Do File.WriteLine("<?xml version=""1.0"" encoding=""UTF-8"" ?>")
+	Do File.WriteLine("<Export>")
+	Set tActivity =..%OpenId(pId)
+	Set rc= tActivity.XMLExportToStream(.File)
+	Do File.WriteLine("</Export>")
+	
+	Set tSC = File.%Save()
+		
+	}
+	Catch error {
+		Write error.Name
+	}
+	
+	Quit tSC
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^PM.ActivityD</DataLocation>
+<DefaultData>ActivityDefaultData</DefaultData>
+<IdLocation>^PM.ActivityD</IdLocation>
+<IndexLocation>^PM.ActivityI</IndexLocation>
+<StreamLocation>^PM.ActivityS</StreamLocation>
+<Data name="ActivityDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Week</Value>
+</Value>
+<Value name="3">
+<Value>Year</Value>
+</Value>
+<Value name="4">
+<Value>Hours</Value>
+</Value>
+<Value name="5">
+<Value>Phase</Value>
+</Value>
+<Value name="6">
+<Value>Project</Value>
+</Value>
+<Value name="7">
+<Value>Member</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="PM.ActivityEntryPage">
+<Description><![CDATA[
+Sample Zen Mojo tutorial page, with one &lt;mojo:documentView>, which is a general container. 
+<p>To specify the appearance of the &lt;mojo:documentView>, this sample uses 
+the ongetlayout callback attribute. 
+This returns a JSON string that describes the contents of the component,
+in terms of a set of layout objects defined by the plugins used in this &;lt;documentView.
+This callback is defined as follows:
+<p>ongetlayout="return zenPage.getContent('mainViewLayout',key,criteria);"
+<p>The method <method>getContent</method> is a built-in page method that you can use to retrieve
+a content object, in this case a layout graph. This method:
+<ol>
+<li>Calls the onGetContent() method of the associated template class. If that method
+returns content for the given key, ZM uses that content.</li>
+<li>Otherwise, ZM calls the %OnGetJSONContent() method of the same template class (not demonstrated here).
+</li> 
+</ol>
+<p>Within &lt;mojo:documentView>, the developerMode="true" option adds a toggle button that you can 
+use to see the JSON data and layout strings available to the component.
+<p>This ZM page class uses the template class <class>ZMbasics.Tutorial1.Template</class>.
+<p>Next tutorial in the series: <class>ZMbasics.Tutorial2.HomePage</class>.]]></Description>
+<Super>%ZEN.Mojo.basePage</Super>
+<TimeChanged>64191,53412.767279</TimeChanged>
+<TimeCreated>62992,74468.158952</TimeCreated>
+
+<Parameter name="TEMPLATECLASS">
+<Description>
+Name of the default template class that this page uses.</Description>
+<Default>PM.ActivityEntryTemplate</Default>
+</Parameter>
+
+<Parameter name="JSINCLUDES">
+<Type>STRING</Type>
+<Default>dojo-release-1-9-1/dojo/dojo.js</Default>
+</Parameter>
+
+<Parameter name="CSSINCLUDES">
+<Type>STRING</Type>
+<Default>dojo-release-1-9-1/dijit/themes/claro/claro.css,dojo-release-1-9-1/gridx/resources/claro/Gridx.css</Default>
+</Parameter>
+
+<XData name="pageContents">
+<Description>
+This XML block defines the contents of the pageContents pane.</Description>
+<XMLNamespace>http://www.intersystems.com/zen</XMLNamespace>
+<Data><![CDATA[
+<pane xmlns="http://www.intersystems.com/zen" 
+xmlns:mojo="http://www.intersystems.com/zen/mojo" layout="none">
+<mojo:documentView id="mainView" 
+developerMode="false"
+ongetlayout  ="return zenPage.getContent('mainViewLayout',key,criteria);"
+ongetdata  ="return zenPage.getContent('data',key,criteria);">
+<mojo:dojo-1.9.1-PageManager>
+<mojo:HTML5Helper/>
+<mojo:dojo-1.9.1-DijitHelper/>
+<mojo:mojoDefaultHelper/>
+</mojo:dojo-1.9.1-PageManager>
+</mojo:documentView>
+
+</pane>
+]]></Data>
+</XData>
+
+<Method name="adjustContentSize">
+<Description>
+Implementation for this page. This method adjusts the size of the documentView components 
+within the content area based on the current width and height of the screen. 
+In this case there is only one documentView.</Description>
+<FormalSpec>load,width,height</FormalSpec>
+<Language>javascript</Language>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+    // This method should have an if{} block for each component. 
+    
+    var mainView = zen('mainView');
+    if (mainView) {
+        mainView.setSize(width, height);
+        var mainDiv = mainView.getEnclosingDiv();
+        mainDiv.style.top =  '0px';
+        mainDiv.style.left = '0px';
+    }
+]]></Implementation>
+</Method>
+
+<Method name="%GetAppSettings">
+<Description>
+Method override for this page. This method defines the application name,
+which controls the name shown on the browser tab.</Description>
+<FormalSpec>pPage:%String="",pMode:%String=""</FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+    //get most settings from the superclass
+    set tInfo = ##super()
+
+    // then override the nameApplication setting -- this affects the browser tab name
+    set tInfo.nameApplication = "Activity Entry Page"
+
+    quit tInfo
+]]></Implementation>
+</Method>
+
+<XData name="Style">
+<Data><![CDATA[
+<style type="text/css">
+
+.dvDocument {
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+.dvBottomPad {
+	height: 0px;
+}
+.dvEnclosingClass iframe {
+	position:relative;
+}
+.dvEnclosingClass {
+	border: none;
+}
+#zMojoContentGroup {
+	border:none;
+}
+.gridx {
+	width: 99%;
+	height: 300px;
+}
+.labelAlign50px {
+	width: 50px;
+	float: left;
+    text-align: right;
+    margin-right: 5px;
+}
+.labelAlign75px {
+	width: 75px;
+	float: left;
+    text-align: right;
+    margin-right: 5px;
+}
+.labelAlign140px {
+	width: 140px;
+	float: left;
+	position: relative;
+    text-align: right;
+    margin-right: 5px;
+}
+.labelAlign300px {
+    text-align: right;
+    padding-right: 15px;
+}
+.labelcontrol {
+	width: 200px;
+	display: block;
+	float: left;
+	margin-bottom: 10px;
+}
+label,input {
+	width: 200px;
+	display: block;
+	float: left;
+	margin-bottom: 10px;
+}
+label
+{
+	text-aligh: right;
+	padding-right: 15px;
+}
+br {
+	clear:left;
+}
+/*
+.gridx {
+	width: 99%;
+	height: 95px;
+}
+*/
+
+
+</style>
+]]></Data>
+</XData>
+
+<UDLText name="T">
+<Content><![CDATA[
+/*
+Method ZMojoDrawQuickLinks(pSeed As %String) As %Status
+{
+	Quit $$$OK
+}
+*/
+]]></Content>
+</UDLText>
+
+<UDLText name="T">
+<Content><![CDATA[
+/// This implementation erases the default contents of the header area.
+
+]]></Content>
+</UDLText>
+</Class>
+
+
+<Class name="PM.ActivityEntryTemplate">
+<Super>%ZEN.Mojo.Component.contentTemplate</Super>
+<TimeChanged>63469,50683.237408</TimeChanged>
+<TimeCreated>62992,82112.841398</TimeCreated>
+
+<Parameter name="NAMESPACE">
+<Description>
+Each template class must have a unique combination of short class name and NAMESPACE parameter.</Description>
+<Default>http://www.intersystems.com/zen/mojo/PM</Default>
+</Parameter>
+
+<Method name="onGetContent">
+<Description><![CDATA[
+Implementation of callback.
+This client-side method is called by the page method getContent(). 
+If <var>providerName</var> is the name of a layout object, this method invokes 
+<method>myGetMainViewLayout</method> and returns the result.
+Otherwise, this method returns null, which means that ZM calls the 
+<method>%OnGetJSONContent</method> of this template (thus going to the server instead).]]></Description>
+<FormalSpec>providerName,key,criteria</FormalSpec>
+<Language>javascript</Language>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+    var content = null;
+
+    // dispatch to convenient methods
+    switch(providerName) {
+    case 'mainViewLayout':
+        content = this.myGetMainViewLayout(key,criteria);
+        break;
+        case 'data': 
+			// always fetch data from server for this sample
+    }
+    return content;
+]]></Implementation>
+</Method>
+
+<Method name="myGetMainViewLayout">
+<Description><![CDATA[
+Method used to get layout information for the mainView component. 
+<p>This method must create and return a JS object with layout information.
+Specifically, the JS object has a set of children, each of which corresponds to a block on the page.
+To create this JS object, it is necessary to know only the following:
+<ul>
+<li>Syntax to create a JS object.</li>
+<li>The available layout objects to use as children.</li>
+<li>The properties that you can set for these layout objects.</li>
+<li>The syntax for referring to the available data. (Not applicable here.)
+</ul>]]></Description>
+<FormalSpec>key,criteria</FormalSpec>
+<Language>javascript</Language>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+    var myLayoutGraph = {};
+
+    //The standard technique is to have a switch/case construct based on the key argument.
+    //In this case, the layout is not key-specific layout, so there is no need to branch.
+
+    myLayoutGraph = {
+        children: [
+			{type:'$ContentPane',key:'layoutContainer-1',style:'width:100%;height:100%;',children:[
+              {type: '$header',      $content: 'Activity Input',style:'font-size: xx-large;text-align: center;'},        
+              {type: '$br'},
+              {type: '$label',      $content: 'MemberId:      ',labelclass:'.labelAlign300px',style:'width:100;'},        
+		      {type:'$input',key:'memberid-txt',inputType: 'text',readonly: 'yes',value:'=[memberId]'},
+              {type: '$br'},
+              {type: '$label',      $content: 'MemberName:    ',labelclass:'.labelAlign300px',style:'width:100;'},        
+		      {type:'$input',key:'membername-txt',inputType: 'text',readonly: 'yes',value:'=[memberName]'},
+              {type: '$br'},
+			  {type: '$Select',key:'project-cbx',baseclass:'labelclass',label:'Project: ',labelclass:'.labelAlign300px',title:'Select Project',valueList:'=[projectList]'},
+              {type: '$br'},
+			  {type: '$Select',key:'phase-cbx',baseclass:'labelclass',label:'Phase: ',labelclass:'.labelAlign300px',title:'Select Phase',valueList:'=[phaseList]'},
+              {type: '$br'},
+              {type: '$label',      $content: 'Working Hours: ',labelclass:'.labelAlign300px',style:'width:100;'},        
+              {type: '$input',key:'activitytime-input',inputType: 'text'},                      
+              {type: '$br'},
+			  {type: '$DateTextBox',key:'activity-datetxt',label:'Select a Week: ',labelclass:'.labelAlign300px',title:'Select Week', value:'=[today]',style:'position:absolute;left:300;'},                      
+              {type: '$br'},
+			  {type:'$Button',key:'activitysave-btn',label:'Save',title:'Save the content',value:'SaveButton'}
+			  ]}
+            ]}    
+       
+    return myLayoutGraph;
+]]></Implementation>
+</Method>
+
+<Method name="onselect">
+<FormalSpec>key,value,docViewId</FormalSpec>
+<Language>javascript</Language>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+	console.log('select '+key);
+	var mainView = zen(docViewId);
+	var realKey = key.split(':')[0];
+	switch(realKey) {
+		case 'activitysave-btn':
+			var id = mainView.getControlValue('memberid-txt');
+			var name = mainView.getControlValue('membername-txt');
+			var project = mainView.getControlValue('project-cbx');
+			var phase = mainView.getControlValue('phase-cbx');
+			var activitytime = mainView.getControlValue('activitytime-input');
+			var activitydate = mainView.getControlValue('activity-datetxt').toJSON();
+			
+			var response = zenPage.submitData('activitysave-btn',{id:id,name:name,project:project,phase:phase,activitytime:activitytime,activitydate:activitydate});
+			if (response && response.error) {
+				alert(response.errorMsg);
+			}
+			else {
+				alert('Saved!');
+			}
+			zenPage.getContentProvider().invalidate('data');
+			//mainView.popDocument(true,true);
+			break;
+	}
+]]></Implementation>
+</Method>
+
+<Method name="%OnSubmitData">
+<Description><![CDATA[
+Submit data handler for content provider.<br/>
+Overridden by subclasses.]]></Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[pKey:%String,pID:%String,pSubmitObject:%RegisteredObject,&pResponseObject:%RegisteredObject]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#Dim tSC = $$$OK
+
+	set pResponseObject = ##class(%ZEN.proxyObject).%New()
+	Try {
+		if (pKey = "activitysave-btn") {
+			set activitydate = pSubmitObject.activitydate
+			set activity = ##class(PM.Activity).%New()
+			set activity.Hours = pSubmitObject.activitytime
+			set project = ##class(PM.Project).%OpenId(pSubmitObject.project)
+			set phase = ##class(PM.Phase).%OpenId(pSubmitObject.phase)
+			set activity.Project = project
+			set activity.Phase = phase
+			set activitydate = pSubmitObject.activitydate
+			set year = $Extract(activitydate,1,4)
+			set month = $Extract(activitydate,6,7)
+			set week = $system.SQL.WEEK(activitydate)
+			set activity.Member = ##class(PM.Person).%OpenId(pSubmitObject.id)
+			set activity.Week = week
+			if ((week = 52) && (month = "01")) {
+				set year = year - 1
+			}
+			set activity.Year = year
+			set tSC = activity.%Save()
+			if $$$ISERR(tSC) $$$ThrowStatus(tSC)			
+		}
+	}
+	Catch(tE) {
+		Set tSC2 = ##class(PM.Error).StoreErrorInformation(tE)
+		set pResponseObject.error = 1
+		set pResponseObject.errorMsg = ##class(%SYSTEM.Status).GetErrorText(tE.AsStatus())
+
+	}
+	Quit tSC
+]]></Implementation>
+</Method>
+
+<Method name="%OnGetJSONContent">
+<Description><![CDATA[
+Server-side method to provide content to JSON providers.<br/>
+<var>pWhich</var> is the name of the provider.<br/>
+<var>pKey</var> is an app-defined key that is used to indicate which content is to be served.<br/>
+<var>pCriteria</var>is an object containing search criteria. This is used for searching.<br/>
+<var>pParms</var> is an array of additional parameters from the JSON provider. (not current used).<br/>
+<var>pObject</var> is the object that will be served to the client in JSON format.<br/>
+<var>pLoad</var> is true is this is called when the page is first being served. In this case, this method will be 
+called even though there may a client-side method used to load the content.<br/>]]></Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[pWhich:%String,pKey:%String,&pParms,*pObject:%RegisteredObject,pCriteria:%RegisteredObject,pLoad:%Boolean=0]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Try {
+	  set tSC = $$$OK	
+	  #dim sql As %String = ""
+	  #dim tsc As %Status = $$$OK
+	  #dim result As %SQL.StatementResult
+	
+	  set pObject = ##class(%ZEN.proxyObject).%New()
+	  set pObject.projectList = ##class(%ListOfObjects).%New()
+		
+	  set statement = ##class(%SQL.Statement).%New()
+	  set sql = "SELECT ID, Name FROM PM.Project"
+	  set tsc = statement.%Prepare(sql)
+	  if $$$ISERR(tSC) $$$ThrowStatus(tSC)			
+	  set result = statement.%Execute()
+		
+	  while result.%Next() {
+		  set project = ##class(%ZEN.proxyObject).%New()
+		  set project.value = result.%Get("ID")
+		  set project.text = result.%Get("Name")
+		  do pObject.projectList.Insert(project)
+	  }
+	
+	  set pObject.phaseList = ##class(%ListOfObjects).%New()
+	  set sql = "SELECT ID, Name FROM PM.Phase"
+	  set tsc = statement.%Prepare(sql)
+	  if $$$ISERR(tSC) $$$ThrowStatus(tSC)			
+	  set result = statement.%Execute()
+		
+	  while result.%Next() {
+		  set phase = ##class(%ZEN.proxyObject).%New()
+		  set phase.value = result.%Get("ID")
+		  set phase.text = result.%Get("Name")
+	      do pObject.phaseList.Insert(phase)
+	  }
+
+	  set pObject.today = $ZDate($H,3)
+	  set member = ##class(PM.Person).UsernameIndexOpen($UserName,,.tSC)
+	  If $$$ISERR(tSC) $$$ThrowStatus(tSC)
+	  set pObject.memberName = member.Name
+	  set pObject.memberId = member.%Id()
+	}
+	Catch tE {
+		Set tSC2 = ##class(PM.Error).StoreErrorInformation(tE)
+	}	
+	quit tSC
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="PM.ActivityQueryPage">
+<Description>
+Created using the page template: Default</Description>
+<Super>%ZEN.Mojo.basePage</Super>
+<TimeChanged>63462,71804.826875</TimeChanged>
+<TimeCreated>63048,58484.834602</TimeCreated>
+
+<Parameter name="APPLICATION">
+<Description>
+Class name of application this page belongs to.</Description>
+<Default>PM.Application</Default>
+</Parameter>
+
+<Parameter name="PAGENAME">
+<Description>
+Displayed name of this page.</Description>
+<Default>HomePage</Default>
+</Parameter>
+
+<Parameter name="DOMAIN">
+<Description>
+Domain used for localization.</Description>
+<Default>Zen Mojo Demo</Default>
+</Parameter>
+
+<Parameter name="PROVIDERLIST">
+<Description>
+List of JSON providers created for this page.
+Used by contentProvider.</Description>
+<Default>data,layout</Default>
+</Parameter>
+
+<Parameter name="TEMPLATECLASS">
+<Description>
+Starting template class for this page
+Used by contentProvider.
+This is overriden by application settings, of provided.</Description>
+<Default>PM.ActivityQueryTemplate</Default>
+</Parameter>
+
+<Parameter name="CSSINCLUDES">
+<Description>
+Comma-separated list of additional CSS3 include files for the page.
+If this is defined *and* this page is using CSS3, then the CSSINCLUDES parameter is ignored.
+If this is not defined *and* this page is using CSS3, then the CSSINCLUDES parameter is used.</Description>
+<Type>STRING</Type>
+<Default>jquery.mobile-1.3.2.min.css</Default>
+</Parameter>
+
+<Parameter name="JSINCLUDES">
+<Description>
+Comma-separated list of additional JS include files for the page.</Description>
+<Type>STRING</Type>
+<Default>jquery-1.10.2.min.js,jquery.mobile-1.3.2.min.js</Default>
+</Parameter>
+
+<XData name="Style">
+<Description>
+This Style block contains page-specific CSS style definitions.</Description>
+<Data><![CDATA[
+<style type="text/css">
+	.ui-listview-filter {
+		margin: 0px;
+	}
+</style>
+]]></Data>
+</XData>
+
+<XData name="pageContents">
+<Description>
+This XML block defines the contents of this pane.</Description>
+<XMLNamespace>http://www.intersystems.com/zen</XMLNamespace>
+<Data><![CDATA[
+<pane xmlns="http://www.intersystems.com/zen"
+xmlns:mojo="http://www.intersystems.com/zen/mojo"
+layout="none">
+
+<mojo:documentView id="mainView"
+developerMode="false" 
+initialDocumentKey="home"
+initialLayoutKey="home"
+ongetlayout = "return zenPage.getContent('layout',key,criteria);"
+ongetdata = "return zenPage.getContent('data',key,criteria);"
+>
+<mojo:jQM-1.3.2-PageManager jQueryAnimation="slide" onPageShow="zenPage.onPageShow(layoutkey,documentkey);">
+<mojo:jQM-1.3.2-Helper/>
+<mojo:HTML5Helper/>
+<mojo:mojoDefaultHelper/>
+</mojo:jQM-1.3.2-PageManager>
+</mojo:documentView>
+
+</pane>
+]]></Data>
+</XData>
+
+<Method name="onPageShow">
+<FormalSpec>layoutkey,documentkey</FormalSpec>
+<Language>javascript</Language>
+<ClientMethod>1</ClientMethod>
+</Method>
+
+<Method name="adjustContentSize">
+<Description>
+Implementation for this page. This method adjusts the size of components 
+within the content area based on the current width and height of the screen. 
+In this case there is only one component.</Description>
+<FormalSpec>load,width,height</FormalSpec>
+<Language>javascript</Language>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+	
+	var mainView = zen('mainView');
+	if (mainView) {
+		var mainDiv = mainView.getEnclosingDiv();
+		mainDiv.style.top =  '0px';
+		mainDiv.style.left = '0px';
+	}
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="PM.ActivityQueryTemplate">
+<Super>%ZEN.Mojo.Component.contentTemplate</Super>
+<TimeChanged>63524,37176.857696</TimeChanged>
+<TimeCreated>63048,58554.738224</TimeCreated>
+
+<Parameter name="NAMESPACE">
+<Default>http://www.intersystems.com/zen/mojo/pm</Default>
+</Parameter>
+
+<Parameter name="DOMAIN">
+<Description>
+Domain used for localization.</Description>
+<Default>PM</Default>
+</Parameter>
+
+<Method name="%OnGetJSONContent">
+<Description><![CDATA[
+Server-side method to provide content to JSON providers.<br/>
+<var>pWhich</var> is the name of the provider.<br/>
+<var>pKey</var> is an app-defined key that is used to indicate which content is to be served.<br/>
+<var>pCriteria</var>is an object containing search criteria. This is used for searching.<br/>
+<var>pParms</var> is an array of additional parameters from the JSON provider. (not current used).<br/>
+<var>pObject</var> is the object that will be served to the client in JSON format.<br/>
+<var>pLoad</var> is true is this is called when the page is first being served. In this case, this method will be 
+called even though there may a client-side method used to load the content.<br/>]]></Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[pWhich:%String,pKey:%String,&pParms,*pObject:%RegisteredObject,pCriteria:%RegisteredObject,pLoad:%Boolean=0]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	#dim sql As %String = ""
+	#dim tsc As %Status = $$$OK
+	#dim result As %SQL.StatementResult
+	
+	set username = $username
+	
+	set pObject = ##class(%ZEN.proxyObject).%New()
+	
+	if (pKey = "home") {
+		set pObject.sectionHeader = "Activity List for "_username
+		set pObject.activityList = ##class(%ListOfObjects).%New()
+		
+		set statement = ##class(%SQL.Statement).%New()
+		set sql = "select id,project->name as projectname,year,week from pm.activity where pm.activity.member->username = ? order by year,week"
+		set tsc = statement.%Prepare(sql)
+		if ($$$ISERR(tsc)) {
+			quit $$$OK
+		}
+		
+		set result = statement.%Execute(username)
+		
+		while result.%Next() {
+			set activity = ##class(%ZEN.proxyObject).%New()
+			set activity.id = result.%Get("id")
+			set activity.projectname = result.%Get("projectname")
+			set activity.yearweek = result.%Get("year")_" "_result.%Get("week")
+			do pObject.activityList.Insert(activity)
+		}
+		
+	} elseif (pKey = "show-activity") {
+		
+		set pObject.sectionHeader = "Activity Detail"
+		
+		set statement = ##class(%SQL.Statement).%New()
+		// Get any additional details now
+		set sql = "select id,project->name as projectname,phase->name as phasename,year,week,hours from pm.activity where id = ?"
+		set tsc  = statement.%Prepare(sql)
+		if ($$$ISERR(tsc)) {
+			quit $$$OK
+		}
+		set result = statement.%Execute(pCriteria.id)
+		
+		while result.%Next() {
+			set pObject.id = result.%Get("id")
+			set pObject.projectname = result.%Get("projectname")
+			set pObject.phasename = result.%Get("phasename")
+			set pObject.year = result.%Get("year")
+			set pObject.week = result.%Get("week")
+			set pObject.hours = result.%Get("hours")
+		}
+		
+	}
+	
+	quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="onGetContent">
+<Description><![CDATA[
+Client-side content provider method.
+<var>which</var> is the name of the content to return.
+<var>key</var> is the key value associated with the request.
+<var>criteria</var> is the search criteria associated with the request.]]></Description>
+<FormalSpec>which,key,criteria</FormalSpec>
+<Language>javascript</Language>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+	//console.log(which + ' - ' + key + ' - ' + criteria);
+	switch (which)
+	{
+		case 'layout':
+			return this.getLayout(key,criteria);
+		case 'data':
+			// always fetch data from server for this sample
+	}
+	
+	// returning null -> fetch data from server
+	return null;
+]]></Implementation>
+</Method>
+
+<Method name="getLayout">
+<Description>
+Creates the layout object for the page</Description>
+<FormalSpec>key,criteria</FormalSpec>
+<Language>javascript</Language>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+	var content = null;
+	
+    
+    switch(key) {
+	    case 'home' :
+	     	content = {
+		     	children:[
+		     		{type:'$header',caption:'=[sectionHeader]'},
+		     		{type:'$listview',value:'=[activityList]',filter:true,children:[
+		     			{type:'$listviewitem',key:'drill-activity',value:'=[id]',label:'=[projectname]',content:'=[yearweek]',clickable:true,labelNoWrapper:false}
+		     		]}
+		     	]
+		     };
+	     	break;
+	     case 'show-activity' :
+	     	content = {
+		     	children:[
+		     		{type:'$header',caption:'=[sectionHeader]'},
+		     		{type:'$form',children:[
+		     			{type:'$text',placeHolder:$$$Text('year'),value:'=[year]',fieldcontain:true,label:$$$Text('Year:'),key:'activity-year'},
+		     			{type:'$text',placeHolder:$$$Text('week'),value:'=[week]',fieldcontain:true,label:$$$Text('Week:'),key:'activity-week'},
+		     			{type:'$text',placeHolder:$$$Text('projectname'),value:'=[projectname]',fieldcontain:true,label:$$$Text('ProjectName:'),key:'activity-project'},
+		     			{type:'$text',placeHolder:$$$Text('phasename'),value:'=[phasename]',fieldcontain:true,label:$$$Text('PhaseName:'),key:'activity-phase'},
+		     			{type:'$text',placeHolder:$$$Text('hours'),value:'=[hours]',fieldcontain:true,label:$$$Text('Hours:'),key:'person-hours'}
+		     		]},
+	     		]
+		     };
+	     	break;
+    } 
+           				
+    return content;
+]]></Implementation>
+</Method>
+
+<Method name="onselect">
+<FormalSpec>key,value,docViewId</FormalSpec>
+<Language>javascript</Language>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+	console.log('select '+key);
+	var mainView = zen(docViewId);
+	var realKey = key.split(':')[0];
+	switch(realKey) {
+		case 'drill-activity':
+			mainView.pushDocument('show-activity',{id:value},'show-activity',{id:value});
+			break;
+	}
+]]></Implementation>
+</Method>
+
+<Method name="onchange">
+<FormalSpec>key,value,final,docViewId</FormalSpec>
+<Language>javascript</Language>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+	console.log('change ' + key + ' to ' + value);
+	var view = zen(docViewId);
+	switch(key) {
+	}
+]]></Implementation>
+</Method>
+
+<Method name="%OnSubmitData">
+<Description><![CDATA[
+Submit data handler for content provider.<br/>
+Overridden by subclasses.]]></Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[pKey:%String,pID:%String,pSubmitObject:%RegisteredObject,&pResponseObject:%RegisteredObject]]></FormalSpec>
+<ReturnType>%Status</ReturnType>
+</Method>
+</Class>
+
+
+<Class name="PM.ActivityReport">
+<Description>
+PM.ActivityReport</Description>
+<Super>%ZEN.Report.reportPage</Super>
+<TimeChanged>63511,70690.429721</TimeChanged>
+<TimeCreated>63481,59206.184691</TimeCreated>
+
+<Parameter name="APPLICATION">
+<Description>
+このレポートが属するアプリケーションのクラス名です。</Description>
+</Parameter>
+
+<Parameter name="DEFAULTMODE">
+<Description><![CDATA[
+Specifies the default display mode used for this report if
+the URL parameter, <var>$MODE</var>, is not present.]]></Description>
+<Type>STRING</Type>
+<Constraint>,html,tohtml,toxslfo,pdf,xml,xslfo,excel,toexcel,ps,pdfprint,xlsx,tiff,displayxlsx,fo2pdf,foandpdf</Constraint>
+<Default>html</Default>
+<Flags>ENUM</Flags>
+</Parameter>
+
+<Parameter name="REPORTXMLNAMESPACE">
+<Description>
+これはレポートで使用されるオプションのXMLネームスペースです。</Description>
+</Parameter>
+
+<XData name="ReportDefinition">
+<Description>
+このXMLはこのレポートの論理コンテンツを定義します。</Description>
+<XMLNamespace>http://www.intersystems.com/zen/report/definition</XMLNamespace>
+<Data><![CDATA[
+<report xmlns="http://www.intersystems.com/zen/report/definition"
+ name="ActivityReport" sql="SELECT YEAR,WEEK,MEMBER->NAME AS NAME,PROJECT->NAME AS PROJECTNAME, PHASE->NAME AS PHASENAME,HOURS FROM PM.ACTIVITY WHERE MEMBER->USERNAME = ? order by year,week">
+<parameter expression='$USERNAME'/>
+<!-- add definition of the report here. -->
+<group name="ActivityHeader" breakOnField="name">
+    <attribute name="name" field="name" />
+    <aggregate name="activitytotal" type="SUM" field="hours" />
+    <group name="ActivityLine">
+    <attribute name="year" field="year" />
+    <attribute name="week" field="week" />
+    <attribute name="projectname" field="projectname" />
+    <attribute name="phasename" field="phasename" />
+    <attribute name="hours" field="hours" />
+  </group></group></report>
+]]></Data>
+</XData>
+
+<XData name="ReportDisplay">
+<Description>
+このXMLはこのレポートの表示を定義します。
+これはHTMLおよびXSL-FOの両方でXSTLスタイルシートの生成に使用されます。</Description>
+<XMLNamespace>http://www.intersystems.com/zen/report/display</XMLNamespace>
+<Data><![CDATA[
+<report xmlns="http://www.intersystems.com/zen/report/display"
+ name="ActivityReport" >
+<!-- Optional Init element inserts custom XSLT instructions at the top level of the generated XSLT stylesheet. -->
+<init ></init>
+<!-- Optional Document element specifies page layout and style characteristics. -->
+<document width="8.5in" height="11in" marginLeft="1.25in" marginRight="1.25in" marginTop="1.0in" marginBottom="1.0in" ></document>
+<!-- Optional Pageheader element. -->
+<pageheader ></pageheader>
+<!-- Optional Pagefooter element. Does not apply in HTML output. -->
+<pagefooter ></pagefooter>
+<!-- Required Body element. -->
+<body>
+<!-- add display definition of the report here. -->
+    <p class="banner1">Activity Report</p>
+    <group name="ActivityHeader" line="1px">
+      <table orient="row" width="5in">
+        <item field="@name" width="2in">
+          <caption value="Name:" width="2in"/>
+        </item>
+        <item field="activitytotal" width="2in">
+          <caption value="Activity Total:" width="2in"/>
+        </item>
+      </table>
+      <line pattern="empty"/>
+<table orient="col" group="ActivityLine" altcolor="#FFDFDF" width="8in">
+        <item field="@year">
+          <caption value="Year:"/>
+        </item>
+        <item field="@week">
+          <caption value="Week:"/>
+        </item>
+        <item field="@projectname">
+          <caption value="Project Name:"/>
+        </item>
+        <item field="@phasename">
+          <caption value="Phase Name:"/>
+        </item>
+        <item field="@hours">
+          <caption value="Activity Hours:"/>
+        </item>
+      </table>    </group></body>
+</report>
+]]></Data>
+</XData>
+</Class>
+
+
+<Class name="PM.Address">
+<Super>%SerialObject,%Populate,%XML.Adaptor</Super>
+<TimeChanged>63498,40263.464106</TimeChanged>
+<TimeCreated>60704,39317.302106</TimeCreated>
+<Inheritance>right</Inheritance>
+
+<UDLText name="T">
+<Content><![CDATA[
+/******************************************************************************
+Id:  PM.Address.cls#1
+説明： 住所（埋め込みオブジェクト）
+******************************************************************************/
+]]></Content>
+</UDLText>
+
+<Property name="Zipcode">
+<Description>
+郵便番号</Description>
+<Type>%String</Type>
+</Property>
+
+<Property name="Prefecture">
+<Description>
+県名</Description>
+<Type>%String</Type>
+</Property>
+
+<Property name="City">
+<Description>
+都市名</Description>
+<Type>%String</Type>
+</Property>
+
+<Property name="Street">
+<Description>
+町名番地</Description>
+<Type>%String</Type>
+</Property>
+
+<Method name="OnPopulate">
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set id=$R($Get(^PM.YubinDataD))+1
+	Set yubin = ##class(PM.YubinData).%OpenId(id)
+	Set ..Zipcode=yubin.ZipCode
+	Set ..Prefecture=yubin.Ken
+	Set ..City=yubin.Toshi
+	Set ..Street=yubin.Cyou
+	QUIT $$$OK
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheSerialState</Type>
+<State>AddressState</State>
+<StreamLocation>^PM.AddressS</StreamLocation>
+<Data name="AddressState">
+<Value name="1">
+<Value>Zipcode</Value>
+</Value>
+<Value name="2">
+<Value>Prefecture</Value>
+</Value>
+<Value name="3">
+<Value>City</Value>
+</Value>
+<Value name="4">
+<Value>Street</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="PM.Application">
+<Description>
+Load and Store Sample.Person Application</Description>
+<Super>%ZEN.Mojo.baseApplication</Super>
+<TimeChanged>63462,71693.847404</TimeChanged>
+<TimeCreated>63048,58507.342228</TimeCreated>
+
+<Parameter name="APPLICATIONNAME">
+<Description>
+This is the name of this application.</Description>
+<Default>Load and Store Sample.Person objects</Default>
+</Parameter>
+
+<Parameter name="HOMEPAGE">
+<Description>
+This is the URL of the main starting page of this application.</Description>
+</Parameter>
+
+<Method name="%GetAppSettings">
+<Description>
+Return an object containing the various configured settings for the portal.</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pPage:%String="",pMode:%String=""</FormalSpec>
+<ReturnType>%ZEN.proxyObject</ReturnType>
+<Implementation><![CDATA[
+	
+	Set tInfo = ##class(%ZEN.proxyObject).%New()
+
+	// initial templateClass
+	Set tInfo.templateClass = ""
+
+	// names
+	Set tInfo.nameApplication = "Project Activity lookup"
+
+	// overrides
+
+	Quit tInfo
+]]></Implementation>
+</Method>
+
+<Method name="ZMojoDrawBackgroundDiv">
+<Description><![CDATA[
+Draw the contents of the background div section (this is purely decorative)
+<var>pPage</var> is the calling page's LOGICALNAME.]]></Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pPage:%String,pMode:%String=""</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set tSC = $$$OK
+	Try {
+	}
+	Catch(ex) {
+		Set tSC = ex.AsStatus()
+	}
+	Quit tSC
+]]></Implementation>
+</Method>
+
+<Method name="ZMojoDrawQuickLinks">
+<Description><![CDATA[
+Draw the contents of the quick links section.
+<var>pPage</var> is the calling page's LOGICALNAME.]]></Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pPage:%String,pMode:%String=""</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set tSC = $$$OK
+	Try {
+	}
+	Catch(ex) {
+		Set tSC = ex.AsStatus()
+	}
+	Quit tSC
+]]></Implementation>
+</Method>
+
+<XData name="Style">
+<Description>
+This Style block contains application-wide CSS style definitions.</Description>
+<Data><![CDATA[
+<style type="text/css">
+</style>
+]]></Data>
+</XData>
+
+<Method name="ZMojoDrawBasicHelp">
+<Description><![CDATA[
+Draw the contents of the basic section.
+<var>pPage</var> is the calling page's LOGICALNAME.]]></Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pPage:%String,pMode:%String=""</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set tSC = $$$OK
+	Try {
+	}
+	Catch(ex) {
+		Set tSC = ex.AsStatus()
+	}
+	Quit tSC
+]]></Implementation>
+</Method>
+
+<Method name="ZMojoDrawFooterGroup">
+<Description><![CDATA[
+Draw the contents of the footer group section.
+<var>pPage</var> is the calling page's LOGICALNAME.]]></Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pPage:%String,pMode:%String=""</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set tSC = $$$OK
+	Try {
+	}
+	Catch(ex) {
+		Set tSC = ex.AsStatus()
+	}
+	Quit tSC
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="PM.Customer">
+<Super>%Persistent,%Populate,%XML.Adaptor</Super>
+<TimeChanged>64191,40340.624506</TimeChanged>
+<TimeCreated>63418,61787.437832</TimeCreated>
+
+<UDLText name="T">
+<Content><![CDATA[
+/******************************************************************************
+Id:  PM.Customer.cls#1
+説明： 顧客情報
+******************************************************************************/
+]]></Content>
+</UDLText>
+
+<Property name="Name">
+<Description>
+名前</Description>
+<Type>%String</Type>
+<Parameter name="POPSPEC" value="##class(PM.PopulateUtils).Company()"/>
+</Property>
+
+<Property name="Address">
+<Description>
+住所</Description>
+<Type>Address</Type>
+</Property>
+
+<Property name="Projects">
+<Description>
+関係しているプロジェクト</Description>
+<Type>PM.Project</Type>
+<Cardinality>many</Cardinality>
+<Inverse>Customer</Inverse>
+<Relationship>1</Relationship>
+</Property>
+
+<Method name="Init">
+<Description>
+テストデータ生成用メソッド</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pNum:%Integer</FormalSpec>
+<Implementation><![CDATA[
+	//Do ..%KillExtent()
+	Do ..Populate(pNum)
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^PM.CustomerD</DataLocation>
+<DefaultData>CustomerDefaultData</DefaultData>
+<IdLocation>^PM.CustomerD</IdLocation>
+<IndexLocation>^PM.CustomerI</IndexLocation>
+<StreamLocation>^PM.CustomerS</StreamLocation>
+<ExtentSize>10</ExtentSize>
+<Data name="CustomerDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Name</Value>
+</Value>
+<Value name="3">
+<Value>Address</Value>
+</Value>
+</Data>
+<Property name="%%CLASSNAME">
+<Selectivity>100.0000%</Selectivity>
+<AverageFieldSize>1</AverageFieldSize>
+</Property>
+<Property name="%%ID">
+<Selectivity>1</Selectivity>
+<AverageFieldSize>1.1</AverageFieldSize>
+</Property>
+<Property name="Address">
+<Selectivity>10.0000%,City:10.0000%,Prefecture:11.1111%,Street:10.0000%,Zipcode:10.0000%</Selectivity>
+<AverageFieldSize>37.6,City:3.6,Prefecture:3.2,Street:4.5,Zipcode:7</AverageFieldSize>
+</Property>
+<Property name="Name">
+<Selectivity>10.0000%</Selectivity>
+<AverageFieldSize>9.9</AverageFieldSize>
+</Property>
+<SQLMap name="IDKEY">
+<BlockCount>-4</BlockCount>
+</SQLMap>
+</Storage>
+</Class>
+
+
+<Class name="PM.Error">
+<Super>%Persistent,%XML.Adaptor</Super>
+<TimeChanged>63498,40707.227345</TimeChanged>
+<TimeCreated>63391,41293.053811</TimeCreated>
+
+<UDLText name="T">
+<Content><![CDATA[
+/******************************************************************************
+Id:  PM.Error.cls#1
+説明：アプリケーションエラーを記録するクラス
+******************************************************************************/
+]]></Content>
+</UDLText>
+
+<Property name="EventDateTime">
+<Description>
+エラー発生日時</Description>
+<Type>%TimeStamp</Type>
+</Property>
+
+<Property name="ErrorDescription">
+<Description>
+エラーの内容</Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="1000"/>
+</Property>
+
+<Method name="StoreErrorInformation">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pException:%Exception.General</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set tSC = $$$OK
+	Try {
+	    set tError = ..%New()
+	    set tError.EventDateTime = $zdatetime($zts,3)
+	    set tStatus = pException.AsStatus()
+	    set tSC = $System.Status.DecomposeStatus(tStatus,.tErrorContent)
+	    set n = ""
+	    Do {
+		   set n= $order(tErrorContent(n))
+		   if n = "" quit
+		   set tErrorContent = $get(tErrorContent)_$get(tErrorContent(n))
+	    } while n='""
+
+	   set tError.ErrorDescription = $Get(tErrorContent)
+	   set tSC = tError.%Save()
+	} 
+	Catch tE {
+		Set ^FAQError(tError.EventDateTime)= $Get(tStatus)
+	}
+	quit tSC
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^PM.ErrorD</DataLocation>
+<DefaultData>ErrorDefaultData</DefaultData>
+<IdLocation>^PM.ErrorD</IdLocation>
+<IndexLocation>^PM.ErrorI</IndexLocation>
+<StreamLocation>^PM.ErrorS</StreamLocation>
+<Data name="ErrorDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>EventDateTime</Value>
+</Value>
+<Value name="3">
+<Value>ErrorDescription</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Routine name="PM" type="INC" timestamp="63440,56569.912139"><![CDATA[
+#define MonthlyHours 160
+#define ManagedProjectNo 4
+#define NoOfWeeks  52
+#define WeekHours  40
+]]></Routine>
+
+
+<Class name="PM.Manager">
+<Description>
+マネージャー</Description>
+<Super>PM.Person</Super>
+<TimeChanged>63512,44267.131011</TimeChanged>
+<TimeCreated>63405,44938.881378</TimeCreated>
+
+<UDLText name="T">
+<Content><![CDATA[
+/******************************************************************************
+Id:  PM.Manager.cls#1
+説明：組織の長
+******************************************************************************/
+]]></Content>
+</UDLText>
+
+<Property name="MonthlyManagementFee">
+<Description>
+月額固定給</Description>
+<Type>%Integer</Type>
+</Property>
+
+<Property name="ManagedOrganizations">
+<Description>
+管理する組織</Description>
+<Type>PM.Organization</Type>
+<Cardinality>many</Cardinality>
+<Inverse>Manager</Inverse>
+<Relationship>1</Relationship>
+</Property>
+
+<Method name="Init">
+<Description>
+データを自動生成</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pNM:%Integer</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set tSC = $$$OK
+	Try {
+	  //Do ..%DeleteExtent()
+	  For i = 1:1:pNM {
+		  Set Manager = ..%New()
+		  Set Manager.Name = ##class(PM.PopulateUtils).Name()
+		  Set Manager.MonthlyManagementFee = ($Random(100) * 10000) + 500000
+		  set Manager.Username = ##class(%PopulateUtils).String(20)
+		  Set tSC = Manager.%Save()
+		  If $$$ISERR(tSC) $$$ThrowStatus(tSC)
+	  }
+	}
+	Catch tE {
+		Set tSC2 = ##class(PM.Error).StoreErrorInformation(tE)
+	}
+	Quit tSC
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DefaultData>ManagerDefaultData</DefaultData>
+<Data name="ManagerDefaultData">
+<Subscript>"Manager"</Subscript>
+<Value name="1">
+<Value>MonthlyManagementFee</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="PM.Member">
+<Description>
+プロジェクト構成員</Description>
+<Super>PM.Person</Super>
+<TimeChanged>64191,40340.647647</TimeChanged>
+<TimeCreated>63405,45477.977289</TimeCreated>
+
+<UDLText name="T">
+<Content><![CDATA[
+/******************************************************************************
+Id:  PM.Member.cls#1
+説明：プロジェクト要員
+******************************************************************************/
+]]></Content>
+</UDLText>
+
+<Property name="HourlyWages">
+<Description>
+時間給</Description>
+<Type>%Integer</Type>
+<Parameter name="POPSPEC" value="##class(PM.PopulateUtils).Wage()"/>
+</Property>
+
+<Method name="Init">
+<Description>
+データを自動生成</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pNum:%Integer</FormalSpec>
+<Implementation><![CDATA[
+	Set testmember = ..%New()
+	Set testmember.Username = "UnknownUser"
+	Set testmember.Name = "テストユーザー"
+	Set testmember.HourlyWages = 20000
+	Set tS = testmember.%Save()
+	Do ..Populate(pNum)
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DefaultData>MemberDefaultData</DefaultData>
+<ExtentSize>96</ExtentSize>
+<Data name="MemberDefaultData">
+<Subscript>"Member"</Subscript>
+<Value name="1">
+<Value>HourlyWages</Value>
+</Value>
+</Data>
+<Property name="%%CLASSNAME">
+<Selectivity>100.0000%</Selectivity>
+<AverageFieldSize>21</AverageFieldSize>
+</Property>
+<Property name="%%ID">
+<Selectivity>1</Selectivity>
+<AverageFieldSize>2.36</AverageFieldSize>
+</Property>
+<Property name="HourlyWages">
+<Selectivity>2.7027%</Selectivity>
+<AverageFieldSize>5</AverageFieldSize>
+</Property>
+<Property name="Name">
+<Selectivity>1.0526%</Selectivity>
+<AverageFieldSize>5.02</AverageFieldSize>
+</Property>
+<Property name="Picture">
+<Selectivity>100.0000%</Selectivity>
+</Property>
+<Property name="Username">
+<Selectivity>1</Selectivity>
+<AverageFieldSize>4.95</AverageFieldSize>
+</Property>
+</Storage>
+</Class>
+
+
+<Class name="PM.Organization">
+<Super>PM.Party</Super>
+<TimeChanged>63512,44244.933089</TimeChanged>
+<TimeCreated>63405,44827.95515</TimeCreated>
+
+<UDLText name="T">
+<Content><![CDATA[
+/******************************************************************************
+Id:  PM.Organization.cls#1
+説明：組織
+オブジェクト指向開発の定石パターンの１つであるコンポジットパターンを利用
+******************************************************************************/
+]]></Content>
+</UDLText>
+
+<Property name="Members">
+<Description>
+構成するメンバー</Description>
+<Type>PM.Party</Type>
+<Collection>list</Collection>
+</Property>
+
+<Property name="Manager">
+<Description>
+管理者</Description>
+<Type>PM.Manager</Type>
+<Cardinality>one</Cardinality>
+<Inverse>ManagedOrganizations</Inverse>
+<Relationship>1</Relationship>
+</Property>
+
+<Method name="Init">
+<Description>
+データの自動生成</Description>
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+	//Do ..%DeleteExtent()
+	&sql(insert into PM.ORGANIZATION (NAME) VALUES ('インテグレーション事業部'))
+	&sql(insert into PM.ORGANIZATION (NAME) VALUES ('医療システム部'))
+	&sql(insert into PM.ORGANIZATION (NAME) VALUES ('医療システム１課'))
+	&sql(insert into PM.ORGANIZATION (NAME) VALUES ('医療システム２課'))
+	&sql(insert into PM.ORGANIZATION (NAME) VALUES ('社会システム部'))
+	&sql(insert into PM.ORGANIZATION (NAME) VALUES ('社会システム１課'))
+	&sql(insert into PM.ORGANIZATION (NAME) VALUES ('社会システム２課'))
+	&sql(insert into PM.ORGANIZATION (NAME) VALUES ('社会システム３課'))
+	&sql(insert into PM.ORGANIZATION (NAME) VALUES ('流通システム部'))
+	&sql(insert into PM.ORGANIZATION (NAME) VALUES ('流通システム１課'))
+	&sql(insert into PM.ORGANIZATION (NAME) VALUES ('金融システム部'))
+	&sql(insert into PM.ORGANIZATION (NAME) VALUES ('金融システム１課'))
+	&sql(insert into PM.ORGANIZATION (NAME) VALUES ('金融システム２課'))
+	&sql(insert into PM.ORGANIZATION (NAME) VALUES ('金融システム３課'))
+	&sql(insert into PM.ORGANIZATION (NAME) VALUES ('製造システム部'))
+	&sql(insert into PM.ORGANIZATION (NAME) VALUES ('製造システム１課'))
+	&sql(insert into PM.ORGANIZATION (NAME) VALUES ('製造システム２課'))
+	&sql(insert into PM.ORGANIZATION (NAME) VALUES ('製造システム３課'))
+	&sql(insert into PM.ORGANIZATION (NAME) VALUES ('製造システム４課'))
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DefaultData>OrganizationDefaultData</DefaultData>
+<Data name="OrganizationDefaultData">
+<Subscript>"Organization"</Subscript>
+<Value name="1">
+<Value>Members</Value>
+</Value>
+<Value name="2">
+<Value>Manager</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Project name="PM" LastModified="2016-09-30 15:48:45.271454">
+  <Items>
+    <ProjectItem name="PM.Activity" type="CLS"></ProjectItem>
+    <ProjectItem name="PM.ActivityEntryPage" type="CLS"></ProjectItem>
+    <ProjectItem name="PM.ActivityEntryTemplate" type="CLS"></ProjectItem>
+    <ProjectItem name="PM.ActivityQueryPage" type="CLS"></ProjectItem>
+    <ProjectItem name="PM.ActivityQueryTemplate" type="CLS"></ProjectItem>
+    <ProjectItem name="PM.ActivityReport" type="CLS"></ProjectItem>
+    <ProjectItem name="PM.Address" type="CLS"></ProjectItem>
+    <ProjectItem name="PM.Application" type="CLS"></ProjectItem>
+    <ProjectItem name="PM.Customer" type="CLS"></ProjectItem>
+    <ProjectItem name="PM.Error" type="CLS"></ProjectItem>
+    <ProjectItem name="PM.INC" type="MAC"></ProjectItem>
+    <ProjectItem name="PM.Manager" type="CLS"></ProjectItem>
+    <ProjectItem name="PM.Member" type="CLS"></ProjectItem>
+    <ProjectItem name="PM.Organization" type="CLS"></ProjectItem>
+    <ProjectItem name="PM.Party" type="CLS"></ProjectItem>
+    <ProjectItem name="PM.Person" type="CLS"></ProjectItem>
+    <ProjectItem name="PM.Phase" type="CLS"></ProjectItem>
+    <ProjectItem name="PM.PhaseEntry" type="CLS"></ProjectItem>
+    <ProjectItem name="PM.PopulateUtils" type="CLS"></ProjectItem>
+    <ProjectItem name="PM.Project" type="CLS"></ProjectItem>
+    <ProjectItem name="PM.ProjectCube" type="CLS"></ProjectItem>
+    <ProjectItem name="PM.REST" type="CLS"></ProjectItem>
+    <ProjectItem name="PM.SetUp" type="CLS"></ProjectItem>
+    <ProjectItem name="PM.Utility" type="CLS"></ProjectItem>
+    <ProjectItem name="PM.YubinData" type="CLS"></ProjectItem>
+    <ProjectItem name="REST.Broker" type="CLS"></ProjectItem>
+    <ProjectItem name="bitutil.INC" type="MAC"></ProjectItem>
+    <ProjectItem name="csp/user/csstest.CSP" type="CSP"></ProjectItem>
+    <ProjectItem name="csp/user/phase.CSP" type="CSP"></ProjectItem>
+    <ProjectItem name="csp/user/pmofficeapi.CSP" type="CSP"></ProjectItem>
+    <ProjectItem name="csp/user/test.css" type="CSP"></ProjectItem>
+  </Items>
+</Project>
+
+
+<Class name="PM.Party">
+<Abstract>1</Abstract>
+<Super>%Persistent,%Populate,%XML.Adaptor</Super>
+<TimeChanged>63498,41215.967559</TimeChanged>
+<TimeCreated>63405,44414.506919</TimeCreated>
+
+<UDLText name="T">
+<Content><![CDATA[
+/******************************************************************************
+Id:  PM.Party.cls#1
+説明：人、組織を表す抽象クラス
+オブジェクト指向開発の定石パターンの１つであるコンポジットパターンを利用
+******************************************************************************/
+]]></Content>
+</UDLText>
+
+<Property name="Name">
+<Description>
+名前</Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="100"/>
+<Parameter name="POPSPEC" value="##class(PM.PopulateUtils).Name()"/>
+</Property>
+
+<Index name="NameIndex">
+<Description>
+名前用インデックス</Description>
+<Properties>Name</Properties>
+</Index>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^PM.PartyD</DataLocation>
+<DefaultData>PartyDefaultData</DefaultData>
+<IdLocation>^PM.PartyD</IdLocation>
+<IndexLocation>^PM.PartyI</IndexLocation>
+<StreamLocation>^PM.PartyS</StreamLocation>
+<Data name="PartyDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Name</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="PM.Person">
+<Super>PM.Party</Super>
+<TimeChanged>63516,64270.958323</TimeChanged>
+<TimeCreated>63405,44663.510047</TimeCreated>
+
+<UDLText name="T">
+<Content><![CDATA[
+/******************************************************************************
+Id:  PM.Person.cls#1
+説明：プロジェクトに関わる人を表現
+******************************************************************************/
+]]></Content>
+</UDLText>
+
+<Property name="Projects">
+<Description>
+関係しているプロジェクト（複数可）</Description>
+<Type>PM.Project</Type>
+<Cardinality>many</Cardinality>
+<Inverse>ProjectManager</Inverse>
+<Relationship>1</Relationship>
+</Property>
+
+<Property name="Activities">
+<Description>
+アクティビティ</Description>
+<Type>PM.Activity</Type>
+<Cardinality>many</Cardinality>
+<Inverse>Member</Inverse>
+<Relationship>1</Relationship>
+</Property>
+
+<Property name="Picture">
+<Description>
+顔写真用データ</Description>
+<Type>%Stream.GlobalBinary</Type>
+</Property>
+
+<Property name="Username">
+<Description>
+ログインユーザー名</Description>
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="20"/>
+</Property>
+
+<Index name="UsernameIndex">
+<Description>
+ユーザー名用インデックス</Description>
+<Properties>Username</Properties>
+<Unique>1</Unique>
+</Index>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DefaultData>PersonDefaultData</DefaultData>
+<Data name="PersonDefaultData">
+<Subscript>"Person"</Subscript>
+<Value name="1">
+<Value>Picture</Value>
+</Value>
+<Value name="2">
+<Value>Username</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="PM.Phase">
+<Super>%Persistent,%Populate,%XML.Adaptor,%ZEN.DataModel.Adaptor</Super>
+<TimeChanged>63512,44330.078146</TimeChanged>
+<TimeCreated>63427,59766.807882</TimeCreated>
+
+<UDLText name="T">
+<Content><![CDATA[
+/******************************************************************************
+Id:  PM.Phase.cls#1
+説明：プロジェクトのフェーズ
+******************************************************************************/
+]]></Content>
+</UDLText>
+
+<Property name="Name">
+<Description>
+名前</Description>
+<Type>%String</Type>
+</Property>
+
+<Index name="NameIndex">
+<Description>
+名前用インデックス</Description>
+<Properties>Name</Properties>
+</Index>
+
+<Method name="Init">
+<Description>
+　データ生成</Description>
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+	//Do ..%KillExtent()
+	&sql(insert into PM.PHASE (NAME) VALUES ('要件定義'))
+	&sql(insert into PM.PHASE (NAME) VALUES ('詳細設計'))
+	&sql(insert into PM.PHASE (NAME) VALUES ('製造・単体テスト'))
+	&sql(insert into PM.PHASE (NAME) VALUES ('結合テスト'))
+	&sql(insert into PM.PHASE (NAME) VALUES ('検収'))
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^PM.PhaseD</DataLocation>
+<DefaultData>PhaseDefaultData</DefaultData>
+<IdLocation>^PM.PhaseD</IdLocation>
+<IndexLocation>^PM.PhaseI</IndexLocation>
+<StreamLocation>^PM.PhaseS</StreamLocation>
+<Data name="PhaseDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Name</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="PM.PhaseEntry">
+<Description>
+フェーズデータ入力用スクリーン</Description>
+<ProcedureBlock>1</ProcedureBlock>
+<Super>%ZEN.Component.page</Super>
+<TimeChanged>63427,68910.012739</TimeChanged>
+<TimeCreated>63427,66796.817382</TimeCreated>
+
+<Parameter name="APPLICATION">
+</Parameter>
+
+<Parameter name="CSSINCLUDES">
+</Parameter>
+
+<Parameter name="DOMAIN">
+<Default>ZENPM</Default>
+</Parameter>
+
+<Parameter name="PAGENAME">
+<Default>PM.PhaseEntry</Default>
+</Parameter>
+
+<Property name="MyId">
+<Type>%Integer</Type>
+</Property>
+
+<Method name="%OnGetJSResources">
+<Description>
+Provide localized text strings for use in the form.</Description>
+<FormalSpec><![CDATA[&pResources:%String]]></FormalSpec>
+<Private>1</Private>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+ Set pResources("SuccessSaveRecord") = $$$Text("Record saved.")
+ Set pResources("NothingRecord") = $$$Text("Enter an ID value. To view a list of IDs click Search.")
+ Set pResources("NoExistRecord") = $$$Text("No record with this ID exists. To view a list of valid IDs click Search.") 
+ Set pResources("ConfirmDelete") = $$$Text("Are you sure you want to delete this record? You cannot undo this operation.") 
+ Set pResources("FailedDelete") = $$$Text("Record was not deleted.") 
+ Set pResources("SuccessDelete") = $$$Text("Record deleted.") 
+ Set pResources("LabelHide") = $$$Text("Hide")
+ Set pResources("LabelTitleHide") = $$$Text("Hide display of current records")
+ Set pResources("LabelSearch") = $$$Text("Search")
+ Set pResources("LabelTitleHide") = $$$Text("Find all records")
+ Set pResources("FailedDataValidation") = $$$Text("Some data was incorrect or incomplete. Please try again. To view tips for entering the correct data format for a field, hover the cursor over the field (or its title) and wait for a tooltip to display"_ $c(13,10,13,10)) 
+ 
+ Set pResources("FailedStringName") = $$$Text("Name was too short or too long."_$c(13,10))
+ 
+ Quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="ModelIdExists">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>modelId:%String</FormalSpec>
+<ReturnType>%Boolean</ReturnType>
+<ZenMethod>1</ZenMethod>
+<Implementation><![CDATA[
+ if ($classmethod("PM.Phase","%ExistsId",modelId)) {
+  Quit 1
+ }
+ else {
+  Quit 0
+ }
+]]></Implementation>
+</Method>
+
+<Method name="deleteRec">
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var id = zen('ID');
+ var val = id.getValue();
+ if (val.length <= 0) {
+  alert(zenText('NothingRecord'));
+  return false;
+ }
+ if (zenPage.ModelIdExists(val) == 0) {
+  alert(zenText('NoExistRecord'));
+  return false;
+ }
+ if (confirm(zenText('ConfirmDelete'))) {
+  var controller = zen('mvc');
+  controller.deleteId(controller.getModelId());
+  controller.createNewObject();
+  controller.update();
+  if (id.setValue('') == false) {
+ 	 alert(zenText('FailedDelete'));
+ 	 return false;
+  }
+  alert(zenText('SuccessDelete'));
+  return false;
+ }
+ else {
+  alert(zenText('FailedDelete'));
+  return false;
+ }
+]]></Implementation>
+</Method>
+
+<Method name="getRecord">
+<FormalSpec>id:%Integer</FormalSpec>
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var controller = zen('mvc');
+ controller.setModelId(id);
+ var idText = id.toString();
+ zenPage.MyId = idText;
+ var id = zen('ID');
+ id.setValue(idText);
+]]></Implementation>
+</Method>
+
+<Method name="hideSearchTable">
+<Description>
+Hide the table of records on the form.</Description>
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var tab = zen('searchTable');
+ tab.setHidden(true); 
+ var btn = zen('btnSearch'); 
+ btn.caption = zenText('LabelSearch'); 
+ btn.title = zenText('LabelTitleSearch');
+ zenPage.refreshContents();
+]]></Implementation>
+</Method>
+
+<Method name="newRec">
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var id = zen('ID');
+ id.setValue('');
+ var controller = zen('mvc');
+ controller.createNewObject();
+]]></Implementation>
+</Method>
+
+<Method name="refreshSearchTable">
+<Description>
+Refresh the table of records on the form.</Description>
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var tab = zen('searchTable');
+ if (tab.hidden == false) { 
+   tab.executeQuery(); 
+ }
+]]></Implementation>
+</Method>
+
+<Method name="saveRec">
+<FormalSpec>ok</FormalSpec>
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ if (ok == true) {
+  var form=zen('PhaseEntry');
+  var save=form.save();
+  if (save.length == 0) ok = false;
+  else var cls=zen('mvc').getModelClass();
+ }
+ if (ok == true) alert(zenText('SuccessSaveRecord'));
+ else alert(zenText('FailedDataValidation'));
+ return ok;
+]]></Implementation>
+</Method>
+
+<Method name="toggleSearchTable">
+<Description>
+Display the table of records on the form.</Description>
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var tab = zen('searchTable');
+ if (tab.hidden == true) { 
+  tab.setHidden(false); 
+  var btn = zen('btnSearch'); 
+  btn.caption = zenText('LabelHide');
+  btn.title = zenText('LabelTitleHide'); 
+  tab.executeQuery(); 
+  zenPage.refreshContents(); 
+ } 
+ else { 
+  zenPage.hideSearchTable(); 
+ }
+]]></Implementation>
+</Method>
+
+<Method name="validateAndSave">
+<Description>
+Refresh the table of records on the form.</Description>
+<Language>javascript</Language>
+<ReturnType>%String</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var msg = '';
+ if (msg.length == 0) zenPage.saveRec(true);
+ else alert(zenText('FailedDataValidation') + msg);
+]]></Implementation>
+</Method>
+
+<Method name="validateDate">
+<FormalSpec>fname:%String</FormalSpec>
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[ return zenPage.validateDateField(zen(fname).getValue());
+]]></Implementation>
+</Method>
+
+<Method name="validateDateField">
+<FormalSpec>field:%String</FormalSpec>
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var len = field.length;
+ if (len < 10) return false;
+ if (field.charAt(4) != '-') return false;
+ if (field.charAt(7) != '-') return false;
+ var part = field.split('-');
+ if (part.length != 3) return false;
+ if (zenPage.validateYear(part[0]) == false) return false;
+ if (zenPage.validateMonthDay(part[1],part[2]) == false) return false;
+ return true;
+]]></Implementation>
+</Method>
+
+<Method name="validateDecimal">
+<FormalSpec>fname:%String</FormalSpec>
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var field = (zen(fname)).getValue();
+ var part = field.split('.');
+ var len = part.length;
+ if ((len <= 0) || (part.length > 2)) return false;
+ for (i = 0; i < len; i++) {
+ 	 if (isNaN(part[i])) return false;
+ }
+ return true;
+]]></Implementation>
+</Method>
+
+<Method name="validateHour">
+<FormalSpec>field:%String</FormalSpec>
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var val = parseInt(field); 
+ return ((val >= 0) && (val <= 23));
+]]></Implementation>
+</Method>
+
+<Method name="validateInteger">
+<FormalSpec>fname:%String,haveMin:%Boolean,min:%Integer,haveMax:%Boolean,max:%Integer</FormalSpec>
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var field = (zen(fname)).getValue(); 
+ if (isNaN(field)) return false; 
+ if ((haveMin == true) && (field < min)) return false; 
+ if ((haveMax == true) && (field > max)) return false; 
+ return true;
+]]></Implementation>
+</Method>
+
+<Method name="validateMinute">
+<FormalSpec>field:%String</FormalSpec>
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var val = parseInt(field); 
+ return ((val >= 0) && (val <= 59));
+]]></Implementation>
+</Method>
+
+<Method name="validateMonthDay">
+<FormalSpec>field1:%String,field2:%String</FormalSpec>
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var m = parseInt(field1);
+ var d = parseInt(field2);
+ if ((m >= 1) && (m <= 12) && (d >= 1) && (d <= 31)) {
+	 if ((m == 4) || (m == 6) || (m == 9) || (m == 11)) {
+		 if (d <= 30) return true;
+	 }
+	 else if (m == 2) {
+		 if (d <= 29) return true;
+	 }
+	 else return true;
+ }
+ return false;
+]]></Implementation>
+</Method>
+
+<Method name="validateRequired">
+<FormalSpec>fname:%String</FormalSpec>
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var field = (zen(fname)).getValue();
+ if (field.length == 0) return false;
+ else return true;
+]]></Implementation>
+</Method>
+
+<Method name="validateString">
+<FormalSpec>fname:%String,haveMin:%Boolean,min:%Integer,haveMax:%Boolean,max:%Integer</FormalSpec>
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var field = (zen(fname)).getValue(); 
+ var len = field.length; 
+ if ((haveMin == true) && (len < min)) return false; 
+ if ((haveMax == true) && (len > max)) return false; 
+ else return true;
+]]></Implementation>
+</Method>
+
+<Method name="validateTime">
+<FormalSpec>fname:%String</FormalSpec>
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[  return zenPage.validateTimeField(zen(fname).getValue());
+]]></Implementation>
+</Method>
+
+<Method name="validateTimeField">
+<FormalSpec>field:%String</FormalSpec>
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var len = field.length;
+ if (len < 8) return false;
+ if (field.charAt(2) != ':') return false;
+ if (field.charAt(5) != ':') return false;
+ var part = field.split(':');
+ if (part.length != 3) return false;
+ if (zenPage.validateHour(part[0]) == false) return false;
+ if (zenPage.validateMinute(part[1]) == false) return false;
+ if (zenPage.validateMinute(part[2]) == false) return false;
+ return true;
+]]></Implementation>
+</Method>
+
+<Method name="validateTimeStamp">
+<FormalSpec>fname:%String</FormalSpec>
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var field = zen(fname).getValue();
+ var len = field.length;
+ if (len < 18) return false;
+ var part = field.split(' ');
+ if (part.length != 2) return false;
+ if (zenPage.validateDateField(part[0]) == false) return false;
+ if (zenPage.validateTimeField(part[1]) == false) return false;
+ return true;
+]]></Implementation>
+</Method>
+
+<Method name="validateYear">
+<FormalSpec>field:%String</FormalSpec>
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var val = parseInt(field); 
+ return ((val >= 0) && (val <= 9999));
+]]></Implementation>
+</Method>
+
+<Method name="viewRec">
+<Language>javascript</Language>
+<ReturnType>%Status</ReturnType>
+<ClientMethod>1</ClientMethod>
+<Implementation><![CDATA[
+ var id = zen('ID');
+ var val = id.getValue();
+ if (val.length <= 0) {
+  alert(zenText('NothingRecord'));
+  return false;
+ }
+ if (zenPage.ModelIdExists(val) == 0) {
+  alert(zenText('NoExistRecord'));
+  return false;
+ }
+]]></Implementation>
+</Method>
+
+<XData name="Contents">
+<XMLNamespace>http://www.intersystems.com/zen</XMLNamespace>
+<Data><![CDATA[
+<page xmlns="http://www.intersystems.com/zen" title="フェーズエントリスクリーン" >
+<dataController id="mvc" modelClass="PM.Phase" modelId="" />
+<form controllerId="mvc" id="PhaseEntry" width="100%" >
+<spacer height="10" />
+<vgroup align="left" valign="top" labelPosition="left" >
+<hgroup>
+<button id="btnNew" caption= "New" title="Clear all fields so that you can create a new record" onclick="zenPage.newRec();"/>
+<button id="btnView" caption="View" title="To edit or delete a record, enter the number in the ID field, then click this button" onclick="zenPage.viewRec();"/>
+<button id="btnSave" caption="Save" title="Save the record currently in view" onclick="zenPage.validateAndSave(); zenPage.refreshSearchTable();"/>
+<button id="btnDelete" caption="Delete" title="Delete the record currently in view" onclick="zenPage.deleteRec(); zenPage.refreshSearchTable();" />
+<button id="btnSearch" caption="Search" title="Find all records" onclick="zenPage.toggleSearchTable();" />
+</hgroup>
+<spacer height="10" />
+ <text label="(System Assigned) ID" id="ID" title="System assigned identifier. Do not edit when creating a new record." size="10" value="#(%page.MyId)#" height="23" onblur="zenPage.getRecord(zenThis.getValue());" />
+ <text id="Name"  label="Name" title="Enter a value" size="50" dataBinding="Name" height="23" />
+   <spacer height="20" />
+   <tablePane id="searchTable" hidden="true" maxRows="50" sql="SELECT * FROM PM.Phase ORDER BY ID" >
+     <column colName="ID" link="javascript:zenPage.getRecord(#(%query.ID)#);" />
+   </tablePane>
+   <spacer height="10" />
+  </vgroup>
+ </form>
+</page>
+]]></Data>
+</XData>
+
+<XData name="Style">
+<Data><![CDATA[
+<style type="text/css">
+</style>
+]]></Data>
+</XData>
+</Class>
+
+
+<Class name="PM.PopulateUtils">
+<ClassType/>
+<ProcedureBlock>1</ProcedureBlock>
+<Super>%RegisteredObject</Super>
+<TimeChanged>63498,53477.208468</TimeChanged>
+<TimeCreated>59460,82229.802088</TimeCreated>
+
+<UDLText name="T">
+<Content><![CDATA[
+/******************************************************************************
+Id:  PM.PopulateUtils.cls#1
+説明：データ自動生成用支援クラス
+******************************************************************************/
+]]></Content>
+</UDLText>
+
+<Method name="City">
+<Description>
+ランダムな都市名を返す</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+ s t1=$lb("大阪市","札幌市","仙台市","大宮市","金沢市","横浜市","川崎市","福岡市","広島市","佐賀市","熊本市","松山市","鹿児島市","山口市","徳山市","岡山市","神戸市","京都市","福知山市","川西市","宝塚市","西宮市","池田市","豊中市","大阪市","奈良市")
+ Quit $li(t1,$r($ll(t1))+1)
+]]></Implementation>
+</Method>
+
+<Method name="Age">
+<Description>
+ランダムな年齢を返す</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Integer</ReturnType>
+<Implementation><![CDATA[
+ Set age=$R(99)
+ Quit age
+]]></Implementation>
+</Method>
+
+<Method name="Bill">
+<Description>
+ランダムな請求額を返す</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Integer</ReturnType>
+<Implementation><![CDATA[
+ Set bill=$R(99)
+ Quit bill*1000
+]]></Implementation>
+</Method>
+
+<Method name="Wage">
+<Description>
+ランダムな賃金を返す</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Integer</ReturnType>
+<Implementation><![CDATA[
+ Set bill=$R(50)
+ Set bill = bill * 1000
+ If bill < 10000 Set bill = bill + 10000 
+ Quit bill
+]]></Implementation>
+</Method>
+
+<Method name="Practice">
+<Description>
+ランダムな診療科を返す</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+ s t1=$lb("内科","外科","小児科","神経外科","皮膚科","眼科","脳外科")
+ Quit $li(t1,$r($ll(t1))+1)
+]]></Implementation>
+</Method>
+
+<Method name="Sex">
+<Description>
+性別を返す</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+ s t1=$lb("男","女")
+ Quit $li(t1,$r($ll(t1))+1)
+]]></Implementation>
+</Method>
+
+<Method name="Company">
+<Description>
+ランダムな会社名を返す</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+ Set c1=$LB("住井","三友","ＮＴＳ","丸田","タクト","電金","新光","出光","アオキ","東川","富士","ディジタル","コスモ","プライス","暗電","総芝","つばさ","ラックス","東経","セコミ","ビーエスシ","SES","IDGG","小文社","ミック","高地歩","ストラテス")
+ Set c2=$LB("商事","証券","銀行","損保","製造","機械","石油","情報","研究所","サービス","医療システム","ジャパン","システムズ","コミュニケーションズ","データ","ウェア","総業","工業","建設","技研","薬品")
+ Set c3=$LB("株式会社","有限会社","株式会社","株式会社","株式会社","株式会社","株式会社")
+ Quit $LI(c1,$Random($LL(c1))+1)_$LI(c2,$random($LL(c2))+1)_$LI(c3,$random($LL(c3))+1)
+]]></Implementation>
+</Method>
+
+<Method name="Currency">
+<Description>
+MINとMAXの間のランダムな価格を返す。</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>min:%Integer=0,max:%Integer=10000000</FormalSpec>
+<ReturnType>%Integer</ReturnType>
+<Implementation><![CDATA[ Quit ##class(%PopulateUtils).Float(min,max,4)
+]]></Implementation>
+</Method>
+
+<Method name="FirstName">
+<Description><![CDATA[
+ランダムな名前を返す
+<p><var>gender</var>は、生成する名前を性別で制御するオプション:
+ 1は男性、 2は女性、""はどちらか]]></Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>gender:%String=""</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+ #; gender is 1:MALE,2:FEMALE
+ s:$g(gender)="" gender=$r(2)+1
+ If (gender = 1) {
+ Set list = $LB("博康","新太郎","俊哉","実","一二三","俊夫",
+ "幹夫","正行","渉","雅夫","誠一","博史",
+ "直弘","孝雄","茂","徹",
+ "雄三","道元","聡","弘明","敏明","信昭",
+ "良成","哲治","芳郎","俊介","操",
+ "英明","道夫","康之","仁孝","浩二郎","和彦",
+ "一成","道裕","亮","武","英之","勝一郎",
+ "哲郎","秀和","幸博","豊","道男","司","徹冶",
+ "高志","昭","明雄","義彦","清司","保之",
+ "徹也","勇","幸太郎","勝","信弘",
+ "達也","勝彦","亮一","敏哉","寛文","照美",
+ "克郎","貴英","正夫","崇","克道",
+ "誠一","正一","孝","公人","泰久")
+ }
+ Else {
+ Set list = $lb("茜","明子","晶子","あずみ","麻美",
+ "泉","いずみ","ひとえ","仁美",
+ "瞳","日登美","美穂","美保",
+ "香織","和美","一美","馨","エミリ","エミ","恵美",
+ "紀子","規子","由紀","雪","孝子","貴子","敏子",
+ "俊子","恵","恵美","愛","藍","三咲",
+ "美咲","みどり","みさえ","由紀子",
+ "由貴","裕香","かなえ","幸子","祥子",
+ "早苗","綾","彩","恵理子","エリカ",
+ "江美","博美","浩美",
+ "智子","友子","真紀","真樹","昌枝",
+ "正枝","静江","順子","淳子","雅子","恭子",
+ "京子","秀美","秀美",
+ "伊代","千恵美","智恵美","洋子","陽子","静香","京香","千春")
+ }
+ Quit $LI(list,$Random($LL(list))+1)
+]]></Implementation>
+</Method>
+
+<Method name="Float">
+<Description>
+minとmaxの間のランダムな浮動小数を返す</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>min:%Integer=0,max:%Integer=100000000,scale:%Integer=0</FormalSpec>
+<ReturnType>%Integer</ReturnType>
+<Implementation><![CDATA[
+ s float=min+$Random(max-min+1)
+ q $s((float<max)&scale:+(float_"."_$Random(scalemax+1)),1:float)
+]]></Implementation>
+</Method>
+
+<Method name="Integer">
+<Description>
+minとmaxの間のランダムな整数を返す </Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>min:%Integer=0,max:%Integer=10000</FormalSpec>
+<ReturnType>%Integer</ReturnType>
+<Implementation><![CDATA[
+ If min>max Quit 0
+ Quit min+$Random(max-min+1)
+]]></Implementation>
+</Method>
+
+<Method name="LastName">
+<Description>
+ランダムな姓名を返す</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+ Set x = $R(26)+1
+ If (x = 1) 	{ Set list = $LB("伊藤","安部","梅田","石川","宇高") }
+ ElseIf (x = 2)	{ Set list = $LB("大崎","江原","安藤","榎本","荒川","大田","上村","大谷","石丸","大野","小島","長田") }
+ ElseIf (x = 3)	{ Set list = $LB("大林","石橋","石田","鬼塚","岩島","井口","小笠原","内野","大沢","岡本","上田","石村","小倉") }
+ ElseIf (x = 4)	{ Set list = $LB("有海","井村","梅沢","大島","井上","上田","奥山","大幡","宇津木") }
+ ElseIf (x = 5)	{ Set list = $LB("阿部","岩淵","荒川","大原","赤羽","新井","板谷") }
+ ElseIf (x = 6)	{ Set list = $LB("金子","川島","河野","金沢","川越","川下") }
+ ElseIf (x = 7)	{ Set list = $LB("甲斐","久保","小林","児玉","木内","亀谷","川原") }
+ ElseIf (x = 8)	{ Set list = $LB("柏木","小谷","北川","川西","加藤","吉川","鎌田") }
+ ElseIf (x = 9)	{ Set list = $LB("岸田","木村","川口") }
+ ElseIf (x = 10)	{ Set list = $LB("佐藤","嵯峨","新庄","鈴木","島","塩田") }
+ ElseIf (x = 11)	{ Set list = $LB("斉藤","笹原","正田","品川","杉山","砂川") }
+ ElseIf (x = 12)	{ Set list = $LB("桜井","清水","関口","白井","篠田","境","坂口","志村","芝戸","高橋","多久和") }
+ ElseIf (x = 13)	{ Set list = $LB("竹林","高松","田畑","高柳","田村","高藤","鷹野","田中","田畑","武田","高岡","滝藤","土井","中村","永尾") }
+ ElseIf (x = 14)	{ Set list = $LB("中沢","中村","長島","中本","中元","野田","西山","乗口","野口") }
+ ElseIf (x = 15)	{ Set list = $LB("西野","西本","西原","内藤","藤居","成井","波内") }
+ ElseIf (x = 16)	{ Set list = $LB("野村","野原","永井","長塚","中武","根本","林","広本","樋口","平田","尾藤","花木") }
+ ElseIf (x = 17)	{ Set list = $LB("廣田","本間","藤木") }
+ ElseIf (x = 18)	{ Set list = $LB("古川","古田","尾藤","福居","日高") }
+ ElseIf (x = 19)	{ Set list = $LB("本田","原田","平山","浜屋","橋本","平本","福嶋","長谷川","平島","吉野","廣瀬","細田") }
+ ElseIf (x = 20)	{ Set list = $LB("古館","早川","吉野","森本","松尾","松田","松本") }
+ ElseIf (x = 21)	{ Set list = $LB("宮崎","三沢","宮本","前川") }
+ ElseIf (x = 22)	{ Set list = $LB("三好","枡屋","武藤","森永") }
+ ElseIf (x = 23)	{ Set list = $LB("望月","丸山","森","溝上","三浦","丸谷","山本","山崎","吉村","安田") }
+ ElseIf (x = 24)	{ Set list = $LB("山中","柳井","横山") }
+ ElseIf (x = 25)	{ Set list = $LB("柳","山野","山原","山口") }
+ ElseIf (x = 26)	{ Set list = $LB("渡辺","渡部","渡邊") }
+ Quit $LI(list,$Random($LL(list))+1)
+]]></Implementation>
+</Method>
+
+<Method name="Mission">
+<Description>
+ランダムに生成した職種を返す</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+ Set c1=$LB("リーダ ","ディベロッパ ","プロバイダ ","リセラー","オンライン配信")
+ Set c2=$LB("先進","インターネット","先端","ブレークスルー","複雑な","高性能","スケーラブル","クロスプラットフォーム","ジャストインタイム","オープン",
+ "パーソナル","ハイテク","ハイタッチ","オープンソース","仮想","インタラクティブ")
+ Set c3=$LB("クオンタム","ナノ","ハイパー","光学","ファイナンシャル","マルチメディア","オブジェクト指向","ブロードバンド","セキュア","ディジタル","Java",
+ "エンタープライズ","リナックスベース","遺伝子 ","ワイヤレス","サテライトベース","ISO 9003準備","Y2K認可済")
+ Set c4=$LB("デバイス","設置作業","グラフィカル","XML ","InterNet ","アプリケーション","データベース","データウェアハウス","フォーキャスティング","音声可能",
+ "コールドフュージョンにて稼働中cold-fusion powered ")
+ Set c5=$LB("サービス","テクノロジー","メディア","内容","ミドルウェア","接続性","コンサルティング","製薬")
+ Set c6=$LB("インターネット用","金融コミュニティ","著名な投資家用","娯楽業界用","家庭用","フォーチュン5用","フォーチュン50用","フォーチュン500用",
+ "フォーチュン5000用","大企業用","デスクトップ用","ヘルスケアコミュニティ用")
+ Quit $LI(c1,$Random($LL(c1))+1)_$LI(c2,$random($LL(c2))+1)_$LI(c3,$random($LL(c3))+1)_$LI(c4,$random($LL(c4))+1)_$LI(c5,$random($LL(c5))+1)_$LI(c6,$random($LL(c6))+1)
+]]></Implementation>
+</Method>
+
+<Method name="Name">
+<Description><![CDATA[
+ランダムな氏名を<i>lastname firstname</i>の形式で返す
+<p><var>gender</var>は、オプションの文字で生成する名前の性別を制御する: 
+1は、男性、2は女性、""は、どちらか一方]]></Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>gender:%String=""</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[ Quit ..LastName()_" "_..FirstName($g(gender))
+]]></Implementation>
+</Method>
+
+<Method name="String">
+<Description>
+ランダムな文字列を返す</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>len:%Integer=1</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+ s:'$g(len) len=1
+ Set slist=$LB("メトロゴールド","モダンアミュズメント","モンスター","ラブラ","ラブラドル","ランドリー","ルショップシピー",
+ "レッドウッド","ロイヤルフラッシュ","６６６","フィラシューズ","フィールドライン","４５ｒｐｍ","フォワード","フラミンゴサルン",
+ "ブレイクビーツ","ボイコット","ボーダメイド","ポールスミス","ミリオンエア","メイドインワールド")
+ s string=$List(slist,$R($LL(slist))+1)
+ QUIT string
+]]></Implementation>
+</Method>
+
+<Method name="Project">
+<Description>
+プロジェクト名を返す</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+ Set slist1=$LB("新規","追加","改修","刷新")
+ Set slist2=$LB("初期","第一期","第二期","第三期","最終工期")
+ s string=$List(slist1,$R($LL(slist1))+1)_"プロジェクト　"_$List(slist2,$R($LL(slist2))+1)
+ QUIT string
+]]></Implementation>
+</Method>
+
+<Method name="Street">
+<Description>
+通りの名前を返す</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+ s t1=$lb("Maple","Ash","Elm","Oak","Main","First","Second","Washington","Franklin","Clinton","Madison")
+ s t2=$lb("Street","Avenue","Blvd","Court","Place","Drive")
+ Quit ($r(9999)+1)_" "_$li(t1,$r($ll(t1))+1)_" "_$li(t2,$r($ll(t2))+1)
+]]></Implementation>
+</Method>
+
+<Method name="Title">
+<Description>
+ランダムな肩書きを返す</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+ Set t1=$LB("","上級","副","アシスタント","戦略","国際","研究","エグゼクティブ")
+ Set t2=$LB("エンジニア","営業担当","サポートエンジニア","開発担当","マーケティングマネージャ","アカウント担当","リソースディレクタ","ディレクタ",
+ "製品マネージャ","リサーチアシスタント","システムエンジニア","テクニシャン","ウェブマスタ","管理者","製品スペシャリスト","会計士","衛生士")
+ Quit $LI(t1,$Random($LL(t1))+1)_$LI(t2,$random($LL(t2))+1)
+]]></Implementation>
+</Method>
+
+<Method name="JPNPhone">
+<Description>
+ランダムな日本の電話番号を返す</Description>
+<ClassMethod>1</ClassMethod>
+<CodeMode>expression</CodeMode>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA["0"_($Random(999))_"-"_($Random(9999))_"-"_($Random(9999))
+]]></Implementation>
+</Method>
+
+<Method name="JPNZip">
+<ClassMethod>1</ClassMethod>
+<CodeMode>expression</CodeMode>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[($Random(899)+100)_"-"_($Random(8999)+1000)
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="PM.Project">
+<IncludeCode>PM</IncludeCode>
+<Super>%Persistent,%Populate,%XML.Adaptor</Super>
+<TimeChanged>63512,44118.314358</TimeChanged>
+<TimeCreated>63427,61382.742998</TimeCreated>
+
+<UDLText name="T">
+<Content><![CDATA[
+/******************************************************************************
+Id:  PM.Project.cls#1
+説明：プロジェクト
+******************************************************************************/
+]]></Content>
+</UDLText>
+
+<Property name="Name">
+<Description>
+名前</Description>
+<Type>%String</Type>
+</Property>
+
+<Property name="Completed">
+<Description>
+完了フラグ</Description>
+<Type>%Boolean</Type>
+</Property>
+
+<Property name="StartDate">
+<Description>
+開始日</Description>
+<Type>%Date</Type>
+</Property>
+
+<Property name="DueDate">
+<Description>
+完了予定日</Description>
+<Type>%Date</Type>
+</Property>
+
+<Property name="OrderAmount">
+<Description>
+受注金額</Description>
+<Type>%Integer</Type>
+</Property>
+
+<Property name="AnticipatedManHours">
+<Description>
+予想工数（人時間）</Description>
+<Type>%Integer</Type>
+</Property>
+
+<Property name="ActualManHours">
+<Description>
+実工数</Description>
+<Type>%Integer</Type>
+<Calculated>1</Calculated>
+<SqlComputeCode> Set {ActualManHours}=##class(PM.Project).ActualManHours({ID})
+</SqlComputeCode>
+<SqlComputed>1</SqlComputed>
+</Property>
+
+<Property name="ActualAmount">
+<Description>
+実費用</Description>
+<Type>%Integer</Type>
+<Calculated>1</Calculated>
+<SqlComputeCode> Set {ActualAmount}=##class(PM.Project).ActualAmount({ID})
+</SqlComputeCode>
+<SqlComputed>1</SqlComputed>
+</Property>
+
+<Property name="Customer">
+<Description>
+顧客</Description>
+<Type>PM.Customer</Type>
+<Cardinality>one</Cardinality>
+<Inverse>Projects</Inverse>
+<Relationship>1</Relationship>
+</Property>
+
+<Index name="CustomerIndex">
+<Description>
+顧客リレーションシップ用インデックス</Description>
+<Properties>Customer</Properties>
+</Index>
+
+<Property name="Activities">
+<Description>
+アクティビティ</Description>
+<Type>PM.Activity</Type>
+<Cardinality>many</Cardinality>
+<Inverse>Project</Inverse>
+<Relationship>1</Relationship>
+</Property>
+
+<Property name="ProjectManager">
+<Description>
+プロジェクトマネージャー</Description>
+<Type>PM.Person</Type>
+<Cardinality>one</Cardinality>
+<Inverse>Projects</Inverse>
+<Relationship>1</Relationship>
+</Property>
+
+<Index name="ProjectManagerIndex">
+<Description>
+プロジェクトマネージャー用インデックス</Description>
+<Properties>ProjectManager</Properties>
+</Index>
+
+<Method name="Init">
+<Description>
+データ自動生成処理</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pNP:%Integer</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Try {
+	  //Do ..%KillExtent()
+	  For i = 1:1:pNP {
+		  Set Project = ..%New()
+		  Set Project.Completed = 0
+		  Set Project.StartDate = +$Horolog - $R(1000)
+		  Set Project.DueDate = Project.StartDate + $Random(1000)
+		  Set Project.Name = ##class(PM.PopulateUtils).Project()
+		  Set Project.OrderAmount = 100000 * $Random(1000)
+		  Set Project.AnticipatedManHours = Project.OrderAmount / 3000
+		  Set tSC = Project.%Save()
+		  If $$$ISERR(tSC) $$$ThrowStatus(tSC)
+	}
+	}
+	Catch tE {
+		Set tSC2 = ##class(PM.Error).StoreErrorInformation(tE)
+	}
+	Quit tSC
+]]></Implementation>
+</Method>
+
+<Method name="ActualManHours">
+<Description>
+実工数計算</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pId:%Integer</FormalSpec>
+<ReturnType>%Integer</ReturnType>
+<Implementation><![CDATA[
+	Set Project = ..%OpenId(pId)
+	Set ActualManHours = 0
+	For i = 1:1:Project.Activities.Count() {
+		Set Activity = Project.Activities.GetAt(i)
+		Set ActualManHours = ActualManHours + Activity.Hours
+	}
+	Quit ActualManHours
+]]></Implementation>
+</Method>
+
+<Method name="ActualAmount">
+<Description>
+実費用計算</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pId:%Integer</FormalSpec>
+<ReturnType>%Integer</ReturnType>
+<Implementation><![CDATA[
+	Set Project = ..%OpenId(pId)
+	Set ActualAmount = 0
+	For i = 1:1:Project.Activities.Count() {
+		Set Activity = Project.Activities.GetAt(i)
+		Set Member = Activity.Member
+		Set ClassName = Member.%ClassName()
+		If (ClassName = "Member") {
+		    Set ActualAmount = ActualAmount + (Activity.Hours * Member.HourlyWages)
+		}
+		ElseIf (ClassName = "Manager") {
+			Set tHours = Activity.Hours 
+			If ( tHours > ($$$MonthlyHours \ $$$ManagedProjectNo)) {
+				Set tHours = $$$MonthlyHours \ $$$ManagedProjectNo
+			}
+		    Set ActualAmount = ActualAmount + ($Normalize((tHours / $$$MonthlyHours) * Member.MonthlyManagementFee,0))
+		}
+	}
+	Quit ActualAmount
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^PM.ProjectD</DataLocation>
+<DefaultData>ProjectDefaultData</DefaultData>
+<IdLocation>^PM.ProjectD</IdLocation>
+<IndexLocation>^PM.ProjectI</IndexLocation>
+<StreamLocation>^PM.ProjectS</StreamLocation>
+<Data name="ProjectDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Name</Value>
+</Value>
+<Value name="3">
+<Value>OrderAmount</Value>
+</Value>
+<Value name="4">
+<Value>AnticipatedManHours</Value>
+</Value>
+<Value name="5">
+<Value>ActualManHours</Value>
+</Value>
+<Value name="6">
+<Value>ActualAmount</Value>
+</Value>
+<Value name="7">
+<Value>Customer</Value>
+</Value>
+<Value name="8">
+<Value>ProjectManager</Value>
+</Value>
+<Value name="9">
+<Value>Completed</Value>
+</Value>
+<Value name="10">
+<Value>StartDate</Value>
+</Value>
+<Value name="11">
+<Value>DueDate</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="PM.ProjectCube">
+<Description>
+</Description>
+<ProcedureBlock>1</ProcedureBlock>
+<Super>%DeepSee.CubeDefinition</Super>
+<TimeChanged>63517,41693.38612</TimeChanged>
+<TimeCreated>63516,69054.732604</TimeCreated>
+<DependsOn>PM.Project</DependsOn>
+
+<Parameter name="DOMAIN">
+</Parameter>
+
+<XData name="Cube">
+<Description>
+Cube definition from Architect.</Description>
+<XMLNamespace>http://www.intersystems.com/deepsee</XMLNamespace>
+<Data><![CDATA[
+<cube xmlns="http://www.intersystems.com/deepsee" name="ProjectCube" displayName="ProjectCube" disabled="false" abstract="false" sourceClass="PM.Project" countMeasureName="%COUNT" bucketSize="8" bitmapChunkInMemory="false" precompute="0">
+  <dimension name="CustomerName" disabled="false" hasAll="false" allCaption="All Name" allDisplayName="Name" type="data" iKnowType="entity" hidden="false" showHierarchies="default">
+    <hierarchy name="H1" disabled="false">
+      <level sourceProperty="Customer.Name" name="CustomerName" disabled="false" list="false" useDisplayValue="true" useAsFilter="true">
+      </level>
+    </hierarchy>
+  </dimension>
+  <dimension name="ProjectName" disabled="false" hasAll="false" allCaption="All Name1" allDisplayName="Name1" type="data" iKnowType="entity" hidden="false" showHierarchies="default">
+    <hierarchy name="H1" disabled="false">
+      <level sourceProperty="Name" name="ProjectName" disabled="false" list="false" useDisplayValue="true" useAsFilter="true">
+      </level>
+    </hierarchy>
+  </dimension>
+  <dimension name="PMName" disabled="false" hasAll="false" allCaption="All Name" allDisplayName="Name" type="data" iKnowType="entity" hidden="false" showHierarchies="default">
+    <hierarchy name="H1" disabled="false">
+      <level sourceProperty="ProjectManager.Name" name="PMName" disabled="false" list="false" useDisplayValue="true" useAsFilter="true">
+      </level>
+    </hierarchy>
+  </dimension>
+  <measure sourceProperty="ActualAmount" name="ActualAmount" disabled="false" aggregate="SUM" type="number" scale="0" hidden="false" searchable="false"></measure>
+  <measure sourceProperty="ActualManHours" name="ActualManHours" disabled="false" aggregate="SUM" type="number" scale="0" hidden="false" searchable="false"></measure>
+  <measure sourceProperty="AnticipatedManHours" name="AnticipatedManHours" disabled="false" aggregate="SUM" type="number" scale="0" hidden="false" searchable="false"></measure>
+  <measure sourceProperty="OrderAmount" name="OrderAmount" disabled="false" aggregate="SUM" type="number" scale="0" hidden="false" searchable="false"></measure>
+  <measure sourceExpression="%source.OrderAmount-%source.ActualAmount" name="Profit" disabled="false" aggregate="SUM" type="number" scale="0" hidden="false" searchable="false"></measure>
+  <listing name="New_listing1" disabled="false" listingType="table"></listing>
+</cube>
+]]></Data>
+</XData>
+</Class>
+
+
+<Class name="PM.REST">
+<Super>%Base</Super>
+<TimeChanged>63638,49204.228596</TimeChanged>
+<TimeCreated>63636,69568.543712</TimeCreated>
+
+<Method name="GetActivities">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	set sts=$$$OK
+	Write:$get(%request) %request.Data("callback",1)
+  	write "("
+    try {
+	    write "["
+      do ##class(%ZEN.Auxiliary.jsonSQLProvider).%WriteJSONFromSQL(,"SELECT MEMBER->NAME AS NAME,SUM(HOURS) AS TOTALHOURS FROM PM.ACTIVITY WHERE MEMBER->USERNAME = 'UnknownUser' GROUP BY MEMBER->NAME","")	    	
+      write ","
+      //do ##class(%ZEN.Auxiliary.jsonSQLProvider).%WriteJSONFromSQL(,"SELECT YEAR,WEEK,MEMBER->NAME AS NAME,PROJECT->NAME AS PROJECTNAME, PHASE->NAME AS PHASENAME,HOURS FROM PM.ACTIVITY WHERE MEMBER->USERNAME = 'UnknownUser' order by year,week","")	    	
+      do ..BuildActivityMatrix()
+    }catch ex {
+        set sts=ex.AsStatus()
+    }
+    write "]"
+  	write ")"
+    quit sts
+]]></Implementation>
+</Method>
+
+<Method name="GetNameAndTotal">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	set sts=$$$OK
+	Write:$get(%request) %request.Data("callback",1)
+  	write "("
+    try {	do ##class(%ZEN.Auxiliary.jsonSQLProvider).%WriteJSONFromSQL(,"SELECT MEMBER->NAME AS NAME,SUM(HOURS) AS TOTALHOURS FROM PM.ACTIVITY WHERE MEMBER->USERNAME = 'UnknownUser' GROUP BY MEMBER->NAME","")
+    }catch ex {
+        set sts=ex.AsStatus()
+    }
+  	write ")"
+    quit sts
+]]></Implementation>
+</Method>
+
+<Method name="BuildActivityMatrix">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	set sts=$$$OK
+	write "{""children"":"
+	write "["
+	set sql = "SELECT YEAR,WEEK,MEMBER->NAME AS NAME,PROJECT->NAME AS PROJECTNAME, PHASE->NAME AS PHASENAME,HOURS FROM PM.ACTIVITY WHERE MEMBER->USERNAME = 'UnknownUser' order by year,week"
+    set rset = ##class(%SQL.Statement).%ExecDirect(,sql)
+    set i = 0
+    while rset.%Next() {
+	    if (i > 0) {
+		    write ","
+	    }
+	    set year = rset.%Get("YEAR")
+	    set week = rset.%Get("WEEK")
+	    set projectname = rset.%Get("PROJECTNAME")
+	    set phasename = rset.%Get("PHASENAME")
+	    set hours = rset.%Get("HOURS")
+	    write "["
+	    write """"_year_""","
+	    write """"_week_""","
+	    write """"_projectname_""","
+	    write """"_phasename_""","
+	    write """"_hours_""""
+	    write "]"
+	    set i = $increment(i)
+	    
+    } 
+    write "]"
+    write "}"
+    quit sts
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="PM.SetUp">
+<IncludeCode>PM</IncludeCode>
+<Super>%Base</Super>
+<TimeChanged>63516,68246.993404</TimeChanged>
+<TimeCreated>63435,45134.779139</TimeCreated>
+
+<UDLText name="T">
+<Content><![CDATA[
+/******************************************************************************
+Id:  PM.SetUp.cls#1
+説明：データ生成用メソッドクラス
+******************************************************************************/
+]]></Content>
+</UDLText>
+
+<Method name="PopulateBasics">
+<Description>
+基本的なデータを自動性する</Description>
+<ClassMethod>1</ClassMethod>
+<Implementation><![CDATA[
+	do ##class(PM.Project).%KillExtent()
+	do ##class(PM.Party).%KillExtent()
+	do ##class(PM.Customer).%KillExtent()
+	do ##class(PM.Phase).%KillExtent()
+	Do ##class(PM.Customer).Init(10)
+	DO ##class(PM.Phase).Init()
+	Do ##class(PM.Organization).Init()
+	&sql(select count(*) into :ON from PM.ORGANIZATION)
+	Do ##class(PM.Manager).Init(ON)
+	Do ##class(PM.Member).Init(ON * 5)
+	Set tSC = ##class(PM.Project).Init(30)
+]]></Implementation>
+</Method>
+
+<Method name="PopulateRelations">
+<Description>
+リレーションシップを設定する</Description>
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Try {
+	
+	  Set tSC = $$$OK
+	  
+	  &sql(select count(*) into :PN from PM.PROJECT)
+	
+	  For i = 1 : 1 : PN {
+		  Set Project = ##class(PM.Project).%OpenId(i)
+		  &sql(select count(*) into :CN from PM.CUSTOMER)
+		  Set tCN = $Random(CN) + 1
+		  Set Customer = ##class(PM.Customer).%OpenId(tCN)
+		  Do Customer.Projects.Insert(Project)
+		  Set tSC = Customer.%Save()
+		  If $$$ISERR(tSC) $$$ThrowStatus(tSC)
+	  }
+	  
+	  Set Division = ##class(PM.Organization).%OpenId(1)
+
+	  Set Department1 = ##class(PM.Organization).%OpenId(2)
+	  Set Department2 = ##class(PM.Organization).%OpenId(5)
+	  Set Department3 = ##class(PM.Organization).%OpenId(9)
+	  Set Department4 = ##class(PM.Organization).%OpenId(11)
+	  Set Department5 = ##class(PM.Organization).%OpenId(15)
+
+	  Do Division.Members.Insert(Department1)
+	  Do Division.Members.Insert(Department2)
+	  Do Division.Members.Insert(Department3)
+	  Do Division.Members.Insert(Department4)
+	  Do Division.Members.Insert(Department5)
+
+	  Set Section1 = ##class(PM.Organization).%OpenId(3)
+	  Set Section2 = ##class(PM.Organization).%OpenId(4)
+	  
+	  Do Department1.Members.Insert(Section1)
+	  Do Department1.Members.Insert(Section2)
+
+	  Set Section3 = ##class(PM.Organization).%OpenId(6)
+	  Set Section4 = ##class(PM.Organization).%OpenId(7)
+	  Set Section5 = ##class(PM.Organization).%OpenId(8)
+	  
+	  Do Department2.Members.Insert(Section3)
+	  Do Department2.Members.Insert(Section4)
+	  Do Department2.Members.Insert(Section5)
+
+	  Set Section6 = ##class(PM.Organization).%OpenId(10)
+
+	  Do Department3.Members.Insert(Section6)
+
+	  Set Section7 = ##class(PM.Organization).%OpenId(12)
+	  Set Section8 = ##class(PM.Organization).%OpenId(13)
+	  Set Section9 = ##class(PM.Organization).%OpenId(14)
+
+	  Do Department4.Members.Insert(Section7)
+	  Do Department4.Members.Insert(Section8)
+	  Do Department4.Members.Insert(Section9)
+
+	  Set Section10 = ##class(PM.Organization).%OpenId(16)
+	  Set Section11 = ##class(PM.Organization).%OpenId(17)
+	  Set Section12 = ##class(PM.Organization).%OpenId(18)
+	  Set Section13 = ##class(PM.Organization).%OpenId(19)
+
+	  Do Department5.Members.Insert(Section10)
+	  Do Department5.Members.Insert(Section11)
+	  Do Department5.Members.Insert(Section12)
+	  Do Department5.Members.Insert(Section13)
+	  
+	  Set tSC = Division.%Save()
+	  
+	  If $$$ISERR(tSC) $$$ThrowStatus(tSC)
+	  	  
+	  &sql(select count(*) into :MN from PM.Manager)
+	  
+	  For i = 1 : 1 : MN {
+		  // Managerはid　20番から　データ生成数に依存しているのでデータ数を変更した際に動作しなくなる可能性
+		  Set Manager = ##class(PM.Manager).%OpenId(i + 19)
+		  Set Organization = ##class(PM.Organization).%OpenId(i)
+		  Do Manager.ManagedOrganizations.Insert(Organization)
+		  Set tSC = Manager.%Save()
+	      If $$$ISERR(tSC) $$$ThrowStatus(tSC)
+	  }
+	  
+	  &sql(select count(*) into :ON from PM.Organization)
+	  &sql(select count(*) into :MN from PM.Member)
+	  
+	  For i = 1 : 1 : MN {
+		  Set Organization = ##class(PM.Organization).%OpenId($Random(ON) + 1)
+		  // memberは39番から データ生成数に依存しているのでデータ数を変更した際に動作しなくなる可能性
+		  Set Member = ##class(PM.Member).%OpenId(i + 38)
+		  Do Organization.Members.Insert(Member)
+		  Set tSC = Organization.%Save()
+	      If $$$ISERR(tSC) $$$ThrowStatus(tSC)
+		  
+	  }
+	  
+	  &sql(select count(*) into :PN from PM.PROJECT)
+	  &sql(select count(*) into :PSN from PM.PARTY)
+	  
+	  For i = 1 : 1 : PN {
+		  Set Project = ##class(PM.Project).%OpenId(i)
+		  // Personは20番以降　データ生成数に依存しているのでデータ数を変更した際に動作しなくなる可能性
+		  Set Person = ##class(PM.Person).%OpenId($Random(PSN - 19) + 20)
+		  Set Project.ProjectManager = Person
+		  Set tSC = Project.%Save()
+	      If $$$ISERR(tSC) $$$ThrowStatus(tSC)
+	  }
+
+	}
+	Catch tE {
+		Set tSC2 = ##class(PM.Error).StoreErrorInformation(tE)
+	}
+	
+	Quit tSC
+]]></Implementation>
+</Method>
+
+<Method name="PopulateTransactions">
+<Description>
+アクティビティを自動生成する</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>NA:%Integer</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	
+	Try {
+	   Set tSC = $$$OK
+	   do ##class(PM.Activity).%KillExtent()
+
+	   &sql(select count(*) into :PN from PM.PARTY)
+	   &sql(select count(*) into :PJN from PM.PROJECT)
+	   &sql(select count(*) into :PHN from PM.PHASE)
+	
+	   For i = 1 : 1 : NA {
+		  Set Activity = ##class(PM.Activity).%New()
+		  Set Activity.Week = $Random($$$NoOfWeeks) + 1
+		  Set Project = ##class(PM.Project).%OpenId($Random(PJN) + 1,,.tSC)
+	      If $$$ISERR(tSC) $$$ThrowStatus(tSC)
+		  Set Activity.Project = Project
+		  Set Activity.Year = 2010 + $Random(5) + 1
+		  Set Phase = ##class(PM.Phase).%OpenId($Random(PHN) + 1,,.tSC)
+	      If $$$ISERR(tSC) $$$ThrowStatus(tSC)
+		  Set Activity.Phase = Phase
+		  // Personは20番以降　データ生成数に依存しているのでデータ数を変更した際に動作しなくなる可能性
+		  Set Person = ##class(PM.Person).%OpenId($Random(PN - 19) + 20,,.tSC)
+	      If $$$ISERR(tSC) $$$ThrowStatus(tSC)
+		  Set Activity.Member = Person
+		  Set Activity.Hours = $Random($$$WeekHours + 30) + 1
+		  Set tSC = Activity.%Save()
+	      If $$$ISERR(tSC) $$$ThrowStatus(tSC)
+	   }
+	}
+	Catch tE {
+		Set tSC2 = ##class(PM.Error).StoreErrorInformation(tE)
+	}
+
+	Quit tSC
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="PM.Utility">
+<Super>%Base</Super>
+<TimeChanged>63498,54508.193054</TimeChanged>
+<TimeCreated>63427,70316.467694</TimeCreated>
+
+<UDLText name="T">
+<Content><![CDATA[
+/******************************************************************************
+Id:  PM.Utility.cls#1
+説明：各種ユーティリティメソッド用クラス
+******************************************************************************/
+]]></Content>
+</UDLText>
+
+<Method name="ImportYubinData">
+<Description>
+全国郵便データをロードする</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pFile:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Set rowtype="DantaiCode VARCHAR(10),OldZipCode VARCHAR(5), ZipCode VARCHAR(7), KenYomi VARCHAR(30), ToshiYomi VARCHAR(30), CyouYomi VARCHAR(30), Ken VARCHAR(30), Toshi VARCHAR(30), Cyou VARCHAR(30)"
+    Set classname = "PM.YubinData"
+    Do ##class(%SQL.Util.Procedures).CSVTOCLASS(,rowtype,pFile,,,0,classname)
+    Quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="LoadPersonImage">
+<Description>
+写真ファイルをロードする</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec>pId:%Integer,pFileName:%String</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+ set person = ##class(MyApp.Person).%OpenId(pId)
+ set stream = ##class(%Stream.FileBinary).%New() 
+ set tS = stream.LinkToFile(pFileName) 
+ do person.Picture.CopyFromAndSave(stream) 
+ set tS =  person.%Save()
+ Quit tS
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="PM.YubinData">
+<Abstract>0</Abstract>
+<DdlAllowed>1</DdlAllowed>
+<ProcedureBlock>1</ProcedureBlock>
+<Super>%Library.Persistent</Super>
+<TimeChanged>63498,54743.566319</TimeChanged>
+<TimeCreated>63427,70509</TimeCreated>
+<LegacyInstanceContext>0</LegacyInstanceContext>
+
+<UDLText name="T">
+<Content><![CDATA[
+/******************************************************************************
+Id:  PM.YubinData.cls#1
+説明：全国郵便データ
+******************************************************************************/
+]]></Content>
+</UDLText>
+
+<Parameter name="ROWTYPE">
+<Description>
+行タイプ</Description>
+<Default>DantaiCode VARCHAR(10),OldZipCode VARCHAR(5), ZipCode VARCHAR(7), KenYomi VARCHAR(30), ToshiYomi VARCHAR(30), CyouYomi VARCHAR(30), Ken VARCHAR(30), Toshi VARCHAR(30), Cyou VARCHAR(30)</Default>
+</Parameter>
+
+<Property name="DantaiCode">
+<Description>
+団体コード</Description>
+<Type>%Library.String</Type>
+<SqlColumnNumber>2</SqlColumnNumber>
+<Parameter name="MAXLEN" value="10"/>
+</Property>
+
+<Property name="OldZipCode">
+<Description>
+旧郵便番号</Description>
+<Type>%Library.String</Type>
+<SqlColumnNumber>3</SqlColumnNumber>
+<Parameter name="MAXLEN" value="5"/>
+</Property>
+
+<Property name="ZipCode">
+<Description>
+郵便番号</Description>
+<Type>%Library.String</Type>
+<SqlColumnNumber>4</SqlColumnNumber>
+<Parameter name="MAXLEN" value="7"/>
+</Property>
+
+<Property name="KenYomi">
+<Description>
+県の読み</Description>
+<Type>%Library.String</Type>
+<SqlColumnNumber>5</SqlColumnNumber>
+<Parameter name="MAXLEN" value="30"/>
+</Property>
+
+<Property name="ToshiYomi">
+<Description>
+都市の読み</Description>
+<Type>%Library.String</Type>
+<SqlColumnNumber>6</SqlColumnNumber>
+<Parameter name="MAXLEN" value="30"/>
+</Property>
+
+<Property name="CyouYomi">
+<Description>
+町の読み</Description>
+<Type>%Library.String</Type>
+<SqlColumnNumber>7</SqlColumnNumber>
+<Parameter name="MAXLEN" value="30"/>
+</Property>
+
+<Property name="Ken">
+<Description>
+県名</Description>
+<Type>%Library.String</Type>
+<SqlColumnNumber>8</SqlColumnNumber>
+<Parameter name="MAXLEN" value="30"/>
+</Property>
+
+<Property name="Toshi">
+<Description>
+都市名</Description>
+<Type>%Library.String</Type>
+<SqlColumnNumber>9</SqlColumnNumber>
+<Parameter name="MAXLEN" value="30"/>
+</Property>
+
+<Property name="Cyou">
+<Description>
+町名</Description>
+<Type>%Library.String</Type>
+<SqlColumnNumber>10</SqlColumnNumber>
+<Parameter name="MAXLEN" value="30"/>
+</Property>
+
+<Method name="Import">
+<Description>
+郵便データをロードする</Description>
+<ClassMethod>1</ClassMethod>
+<FormalSpec><![CDATA[pSelectMode:%Library.Integer={$zu(115,5)},pFileName:%Library.String(MAXLEN=""),pDelimiter:%String=",",pQuote:%String="""",pHeaders:%Integer=0,&pRecordCount:%Integer]]></FormalSpec>
+<ReturnType>%Library.Integer</ReturnType>
+<SqlProc>1</SqlProc>
+<Implementation><![CDATA[
+	set tStatementId = $SYSTEM.Util.CreateGUID(), tCounter = 0, pRecordCount = 0
+	set tPreparedStatement = ##class(%SQL.DynamicStatement).Prepare(tStatementId,..#ROWTYPE,pDelimiter,pQuote,,,0,"CSV")
+	if $Isobject(tPreparedStatement) {
+		set tImporter = tPreparedStatement.%New(tPreparedStatement,,pFileName,pDelimiter,pQuote)
+		if $Isobject(tImporter) {
+			do ..%DeleteExtent(,.tDeleted,.tInstances,1)
+				// burn the column headers
+			for tPtr = 1:1:pHeaders { do tImporter.%Next() }
+			while tImporter.%Next() {
+				set tMe = ..%New()
+				if 'pSelectMode {
+					set tMe.DantaiCode = tImporter.%GetData(1)
+					set tMe.OldZipCode = tImporter.%GetData(2)
+					set tMe.ZipCode = tImporter.%GetData(3)
+					set tMe.KenYomi = tImporter.%GetData(4)
+					set tMe.ToshiYomi = tImporter.%GetData(5)
+					set tMe.CyouYomi = tImporter.%GetData(6)
+					set tMe.Ken = tImporter.%GetData(7)
+					set tMe.Toshi = tImporter.%GetData(8)
+					set tMe.Cyou = tImporter.%GetData(9)
+				}
+				elseif pSelectMode = 1 {
+					set tMe.DantaiCode = $s('$system.CLS.IsMthd("DantaiCodeOdbcToLogical"):tImporter.%GetData(1),1:tMe.DantaiCodeOdbcToLogical(tImporter.%GetData(1)))
+					set tMe.OldZipCode = $s('$system.CLS.IsMthd("OldZipCodeOdbcToLogical"):tImporter.%GetData(2),1:tMe.OldZipCodeOdbcToLogical(tImporter.%GetData(2)))
+					set tMe.ZipCode = $s('$system.CLS.IsMthd("ZipCodeOdbcToLogical"):tImporter.%GetData(3),1:tMe.ZipCodeOdbcToLogical(tImporter.%GetData(3)))
+					set tMe.KenYomi = $s('$system.CLS.IsMthd("KenYomiOdbcToLogical"):tImporter.%GetData(4),1:tMe.KenYomiOdbcToLogical(tImporter.%GetData(4)))
+					set tMe.ToshiYomi = $s('$system.CLS.IsMthd("ToshiYomiOdbcToLogical"):tImporter.%GetData(5),1:tMe.ToshiYomiOdbcToLogical(tImporter.%GetData(5)))
+					set tMe.CyouYomi = $s('$system.CLS.IsMthd("CyouYomiOdbcToLogical"):tImporter.%GetData(6),1:tMe.CyouYomiOdbcToLogical(tImporter.%GetData(6)))
+					set tMe.Ken = $s('$system.CLS.IsMthd("KenOdbcToLogical"):tImporter.%GetData(7),1:tMe.KenOdbcToLogical(tImporter.%GetData(7)))
+					set tMe.Toshi = $s('$system.CLS.IsMthd("ToshiOdbcToLogical"):tImporter.%GetData(8),1:tMe.ToshiOdbcToLogical(tImporter.%GetData(8)))
+					set tMe.Cyou = $s('$system.CLS.IsMthd("CyouOdbcToLogical"):tImporter.%GetData(9),1:tMe.CyouOdbcToLogical(tImporter.%GetData(9)))
+				}
+				elseif pSelectMode = 2 {
+					set tMe.DantaiCode = $s('$system.CLS.IsMthd("DantaiCodeDisplayToLogical"):tImporter.%GetData(1),1:tMe.DantaiCodeDisplayToLogical(tImporter.%GetData(1)))
+					set tMe.OldZipCode = $s('$system.CLS.IsMthd("OldZipCodeDisplayToLogical"):tImporter.%GetData(2),1:tMe.OldZipCodeDisplayToLogical(tImporter.%GetData(2)))
+					set tMe.ZipCode = $s('$system.CLS.IsMthd("ZipCodeDisplayToLogical"):tImporter.%GetData(3),1:tMe.ZipCodeDisplayToLogical(tImporter.%GetData(3)))
+					set tMe.KenYomi = $s('$system.CLS.IsMthd("KenYomiDisplayToLogical"):tImporter.%GetData(4),1:tMe.KenYomiDisplayToLogical(tImporter.%GetData(4)))
+					set tMe.ToshiYomi = $s('$system.CLS.IsMthd("ToshiYomiDisplayToLogical"):tImporter.%GetData(5),1:tMe.ToshiYomiDisplayToLogical(tImporter.%GetData(5)))
+					set tMe.CyouYomi = $s('$system.CLS.IsMthd("CyouYomiDisplayToLogical"):tImporter.%GetData(6),1:tMe.CyouYomiDisplayToLogical(tImporter.%GetData(6)))
+					set tMe.Ken = $s('$system.CLS.IsMthd("KenDisplayToLogical"):tImporter.%GetData(7),1:tMe.KenDisplayToLogical(tImporter.%GetData(7)))
+					set tMe.Toshi = $s('$system.CLS.IsMthd("ToshiDisplayToLogical"):tImporter.%GetData(8),1:tMe.ToshiDisplayToLogical(tImporter.%GetData(8)))
+					set tMe.Cyou = $s('$system.CLS.IsMthd("CyouDisplayToLogical"):tImporter.%GetData(9),1:tMe.CyouDisplayToLogical(tImporter.%GetData(9)))
+				}
+				set tStatus = tMe.%Save()
+				if $$$ISOK(tStatus) { set tCounter = tCounter + 1 }
+			}
+		}
+	}
+	set %sqlcontext.%SQLCODE = 0
+	set %sqlcontext.%ROWCOUNT = tCounter
+	set pRecordCount = tCounter
+	quit tCounter
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^PM.YubinDataD</DataLocation>
+<DefaultData>YubinDataDefaultData</DefaultData>
+<IdLocation>^PM.YubinDataD</IdLocation>
+<IndexLocation>^PM.YubinDataI</IndexLocation>
+<StreamLocation>^PM.YubinDataS</StreamLocation>
+<Data name="YubinDataDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>DantaiCode</Value>
+</Value>
+<Value name="3">
+<Value>OldZipCode</Value>
+</Value>
+<Value name="4">
+<Value>ZipCode</Value>
+</Value>
+<Value name="5">
+<Value>KenYomi</Value>
+</Value>
+<Value name="6">
+<Value>ToshiYomi</Value>
+</Value>
+<Value name="7">
+<Value>CyouYomi</Value>
+</Value>
+<Value name="8">
+<Value>Ken</Value>
+</Value>
+<Value name="9">
+<Value>Toshi</Value>
+</Value>
+<Value name="10">
+<Value>Cyou</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="REST.Broker">
+<Super>%CSP.REST</Super>
+<TimeChanged>63637,66275.66896</TimeChanged>
+<TimeCreated>63034,38587.500734</TimeCreated>
+
+<XData name="UrlMap">
+<Data><![CDATA[
+<Routes>
+  <Route Url="/jqueryjson" Method="GET" Call="REST.JSON:GetColors"/>
+  <Route Url="/test" Method="GET" Call="Test"/>
+  <Route Url="/companies" Method="GET" Call="REST.HTML:GetCompanies"/>
+  <Route Url="/orders/:compid" Method="GET" Call="REST.HTML:GetOrders"/>
+  <Route Url="/JSON/companies" Method="GET" Call="REST.JSON:GetAllCompanies"/>
+  <Route Url="/JSON/company/:compid" Method="PUT" Call="REST.JSON:UpdateCompany"/>
+  <Route Url="/JSON/company/:compid" Method="DELETE" Call="REST.JSON:DeleteCompany"/>
+  <Route Url="/JSON/company" Method="POST" Call="REST.JSON:CreateCompany"/>
+  <Route Url="/XML/companies" Method="GET" Call="REST.XML:GetAllCompanies"/>
+  <Route Url="/XML/company/:compid" Method="GET" Call="REST.XML:GetCompany"/>
+  <Route Url="/getuserandtotal" Method="GET" Call="PM.REST:GetNameAndTotal"/>
+  <Route Url="/getactivities" Method="GET" Call="PM.REST:GetActivities"/>
+  <Route Url="/testp" Method="GET" Call="Testp"/>
+</Routes>
+]]></Data>
+</XData>
+
+<Method name="Test">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	&html<IT WORKS!>
+	quit $$$OK
+]]></Implementation>
+</Method>
+
+<Method name="Testp">
+<ClassMethod>1</ClassMethod>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	Write %request.Data("callback",1)
+  	write "("
+  	//write 123
+  	write "{""name"": ""羽生善治"",""age"": 40,""titles"": [""王座"",""棋聖""],""married"": true}"
+  	write ")"
+	quit $$$OK
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Routine name="bitutil" type="INC" timestamp="61047,42713"><![CDATA[
+#define CHUNKSIZE 64000
+ 
+]]></Routine>
+
+
+<CSP name="csstest.CSP" application="/csp/user/" default="1"><![CDATA[
+<html>
+<head>
+
+<!-- Put your page Title here -->
+<title>	Cache Server Page </title>
+<LINK REL="stylesheet" TYPE="text/css" HREF="test.css" >
+
+</head>
+
+<body>
+%Library.Routine （以降、%Routine）クラスのRoutineListクエリを使用して、プログラムからルーチンの日付やサイズを取得できます。<br>
+RoutineListクエリには、引数があり、検索対象となるルーチン名を前方一致で指定できます。（ワイルドカードには、*　か　?　を指定します。）<br>
+以下の例では、*.OBJ　を引数に指定して、検索をしています。<br>
+<DIV class=divcommand><PRE><CODE>
+set rs=##class(%ResultSet).%New("%Routine:RoutineList")
+do rs.Execute("*.OBJ",,1)
+while (rs.Next()) {
+        set name=rs.Get("Name")
+        set size=rs.Get("Size")
+        set date=rs.Get("Date")
+        if name["%" continue
+        write name,",",size,",",date,!
+}
+do rs.Close()
+quit
+</CODE></PRE></DIV> 
+ルーチン一覧の他に、クラス定義一覧も取得できます。詳細については、関連トピックをご参照ください。
+</body>
+</html>
+]]></CSP>
+
+
+<CSP name="phase.CSP" application="/csp/user/" default="1"><![CDATA[
+<html>
+<head>
+
+<!-- Put your page Title here -->
+<title>	Cache Server Page </title>
+
+</head>
+
+<body>
+
+		<!-- Put your page code here -->
+
+<head>
+<title>Cache Server Page - PM.Phase (USER)</title>
+</head>
+<h1 align='center'>PM.Phase</h1>
+<!-- This function is needed by the search button on the form -->
+<script language='javascript'>
+<!--
+function update(id)
+{
+     #server(..formLoad(id))#;
+     return true;
+}
+
+// -->
+</script>
+
+<!-- set the domain so error messages could be properly localized -->
+<csp:class DOMAIN='%CSPBind'>
+
+<!-- use CSP:OBJECT tag to create a reference to an instance of the class -->
+<csp:object name='objForm' classname='PM.Phase' OBJID='#(%request.Get("OBJID"))#'>
+
+<!-- use csp:search tag to create a javascript function to invoke a search page --> 
+<csp:search name='form_search' classname='PM.Phase' where='Name,Name' options='popup,nopredicates' onselect='update'>
+
+<form name='form' cspbind='objForm' cspjs='All' onsubmit='return form_validate();'>
+<center>
+<table cellpadding='3'>
+	<tr>
+		<td><b><div align='right'>Name:</div></b></td>
+		<td><input type='text' name='Name' cspbind='Name' size='50'></td>
+	</tr>
+	<tr>
+		<td>&nbsp;</td>
+		<td><input type='button' name='btnClear' value='#(%response.GetText("","%CSPSearch","ClearBtn","clear"))#' onclick='form_new();'>
+	<input type='button' name='btnSave' value='#(%response.GetText("","%CSPSearch","SaveBtn","save"))#' onclick='form_save();'>
+	<input type='button' name='btnSearch' value='#(%response.GetText("","%CSPSearch","SearchBtn","search"))#' onclick='form_search();'></td>
+	</tr>
+</table>
+</center>
+</form>
+
+</body>
+</html>
+]]></CSP>
+
+
+<CSP name="pmofficeapi.CSP" application="/csp/user/" default="1"><![CDATA[
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-1.9.0.min.js"></script>
+    <script src="https://appsforoffice.microsoft.com/lib/1.0/hosted/office.js"></script>
+    <script type="text/javascript">
+    Office.initialize = function (reason) {
+      $(document).ready(function () {
+          var docUrl = 'http://localhost:57772/rest/getactivities';
+          $.ajax({
+            url : docUrl,
+            dataType : 'jsonp',
+            jsonp : 'callback',
+            beforeSend:function(xhr){
+              $('#msgline').html('getting from Cache ...');
+            },
+            success : function(data, status){
+	            	            
+                Office.context.document.bindings.addFromNamedItemAsync("Sheet1!Name","text",{id:"myName"}, function (result) {
+
+                        if (result.status == "succeeded"){
+
+                            $('#msgline').html('Nameバインドを追加しました。:');
+                            write("バインドを追加しました。:" + result.value.id + " , Type:" + result.value.type);
+
+                        } else {
+
+                            $('#msgline').html('Nameバインドをエラー:');
+                            write("エラーが発生しました。:" + result.error.message);
+
+                        }
+
+                });
+
+                Office.context.document.bindings.addFromNamedItemAsync("Sheet1!TotalHours","text",{id:"TotalHours"}, function (result) {
+
+                        if (result.status == "succeeded"){
+
+                            $('#msgline').html('TotalHoursバインドを追加しました。:');
+                            write("バインドを追加しました。:" + result.value.id + " , Type:" + result.value.type);
+
+                        } else {
+
+                            $('#msgline').html('TotalHoursバインドをエラー:');
+                            write("エラーが発生しました。:" + result.error.message);
+
+                        }
+
+                });
+
+                Office.context.document.bindings.addFromNamedItemAsync("Sheet1!ActivityRecords","matrix",{id:"ActivityRecords"}, function (result) {
+
+                        if (result.status == "succeeded"){
+
+                            $('#msgline').html('ActivityRecordsバインドを追加しました。:');
+                            write("バインドを追加しました。:" + result.value.id + " , Type:" + result.value.type);
+
+                        } else {
+
+                            $('#msgline').html('ActivityRecordsバインドをエラー:');
+                            write("エラーが発生しました。:" + result.error.message);
+
+                        }
+
+                });
+
+                Office.select("bindings#myName").setDataAsync(data[0].children[0].NAME, {coercionType:"text"}, function (result) {
+
+                        if (result.status == "failed") {
+
+                            $('#msgline').html('setDataAscyncエラー:');
+                            write("エラーが発生しました。:" + result.error.message);
+
+                        }
+                });
+
+                Office.select("bindings#TotalHours").setDataAsync(data[0].children[0].TOTALHOURS, {coercionType:"text"}, function (result) {
+
+                        if (result.status == "failed") {
+
+                            $('#msgline').html('setDataAscyncエラー:');
+                            write("エラーが発生しました。:" + result.error.message);
+
+                        }
+                });
+
+                Office.select("bindings#ActivityRecords").setDataAsync(data[1].children, {coercionType:"matrix"}, function (result) {
+
+                        if (result.status == "failed") {
+
+                            $('#msgline').html('setDataAscyncエラー:');
+                            write("エラーが発生しました。:" + result.error.message);
+
+                        }
+                });
+
+            },
+            error : function(){
+              $('#msgline').html('原因不明エラー');
+            }
+
+          });
+        });
+    };
+    </script>
+  </head>
+  <body>
+    <div style="font-weight:bold">Cache Data Picker</div>
+    <p id="msgline" style="background-color:gray;">initializing ...</p>
+  </body>
+</html>]]></CSP>
+
+
+<CSP name="test.css" application="/csp/user/" default="1"><![CDATA[
+body {
+font-size:15px;
+font-family:arial;
+}
+
+div {
+margin:10px 40px;
+}
+
+div.version{
+height:5px;
+margin:0px 40px;
+text-align:right;
+}
+
+span.version
+{
+font:bold 100% "Arial";
+color:#3300CC;
+padding-right:20px;
+}
+
+h1.title
+{
+font-size:16px;
+color:#000055;
+background-image:url('images/background/title-gradient-bg_blue.gif');
+background-repeat:repeat-x;
+padding:10px 0px 10px 10px;
+}
+
+img.titleicon
+{
+padding:5px 0px 5px 10px;
+float:left;
+}
+
+div.description
+{
+margin:20px 30px 20px 45px;
+height:55%;
+overflow-y:auto;
+padding-right:20px;
+line-height:1.5;
+}
+
+div.divcommand
+{
+width:90%;
+overflow-x:auto;
+margin:10px 0px;
+background-color:#E0FFFF;
+}
+
+span.refhead
+{
+font-size:85%;
+font-weight:bold;
+color:#30758c;
+/*color:#6633FF;*/
+}
+
+span.refbody
+{
+font-size:85%;
+}
+
+div.toedit{
+margin:20px;
+text-align:center;
+font-weight:bold;
+font-style:italic;
+}
+
+div.enquete
+{
+margin:0px 50px;
+float:left;
+}
+
+span.enqhead
+{
+color:olive;
+font-size:70%;
+font-style:italic;
+text-align:left;
+}
+
+span.enq
+{
+font-size:90%;
+}
+
+div.mailto
+{
+margin:20px 50px;
+text-align:right;
+}
+
+span.mail
+{
+font-size:90%;
+}
+
+div.closebtn
+{
+margin:10px 30px 0px;
+}
+
+div.howtouse
+{
+font-size:0.5em;
+line-height:1.5;
+}]]></CSP>
+</Export>

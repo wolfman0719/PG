@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<OfficeApp
+  xmlns="http://schemas.microsoft.com/office/appforoffice/1.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:type="ContentApp">
+  <Id>c6fa633e-c0dd-4db3-bf15-20ceeaa78617</Id>
+  <Version>1.0</Version>
+  <ProviderName>Hoge Hoge</ProviderName>
+  <DefaultLocale>en-US</DefaultLocale>
+  <DisplayName DefaultValue="PMApp" />
+  <Description DefaultValue="This is a sample app." />
+  <Capabilities>
+    <Capability Name="Workbook" />
+  </Capabilities>
+  <DefaultSettings>
+    <SourceLocation DefaultValue="http://localhost:57772/csp/user/pmofficeapi.CSP" />
+    <RequestedWidth>32</RequestedWidth>
+    <RequestedHeight>32</RequestedHeight>
+  </DefaultSettings>
+  <Permissions>ReadWriteDocument</Permissions>
+</OfficeApp>
