@@ -17,7 +17,7 @@ IRIS Data Platform 実践プログラミングガイド世代管理用Docker Bui
 
 ### Docker for Windows & for Mac
 
-[管理ポータル](localhost:52779/csp/sys/%25CSP.Portal.Home.zen?IRISUsername=_system&IRISPassword=demosystem)
+[管理ポータル](http://localhost:52779/csp/sys/%25CSP.Portal.Home.zen?IRISUsername=_system&IRISPassword=demosystem)
 
 ### Docker Toolbox
 
@@ -26,4 +26,5 @@ IRIS Data Platform 実践プログラミングガイド世代管理用Docker Bui
 ### ログインユーザー&パスワード
 
 システムログイン　　_system
+
 パスワード　	demosystem
