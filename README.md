@@ -9,9 +9,9 @@ IRIS Data Platform 実践プログラミングガイド世代管理用Docker Bui
 ## ビルドプロセス
 
 ### Build
-```./build.sh
+```./build.sh```
 ### Run
-```./run.sh
+```./run.sh```
 
 ## 管理起動方法
 
