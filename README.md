@@ -1,30 +1,22 @@
 # PG
-======
 
-For IRIS Data Platform Rapid Programming Guide
-
-IRIS Data Platform 実践プログラミングガイド世代管理用Docker Build
+IRIS実践プログラミングガイドDocker Build
 
 
 ## ビルドプロセス
 
 ### Build
-```./build.sh```
+* `docker-compose build`
 ### Run
-```./run.sh```
+* `docker-compose up -d`
 
-## 管理起動方法
+## 管理ポータル起動方法
 
-### Docker for Windows & for Mac
+[localhost:52779/csp/sys/%25CSP.Portal.Home.zen?IRISUsername=_system&IRISPassword=demosystem](http://localhost:52779/csp/sys/%25CSP.Portal.Home.zen?IRISUsername=_system&IRISPassword=demosystem)
 
-[管理ポータル](http://localhost:52779/csp/sys/%25CSP.Portal.Home.zen?IRISUsername=_system&IRISPassword=demosystem)
+## クルデンシャル情報
 
-### Docker Toolbox
-
-[管理ポータル](http://192.168.99.100:52779/csp/sys/%25CSP.Portal.Home.zen?IRISUsername=_system&IRISPassword=demosystem)
-
-### ログインユーザー&パスワード
-
-システムログイン　　_system
-
-パスワード　	demosystem
+|項目           |値         |
+|--------------|-----------|
+|システムログイン |_system    |
+|パスワード　	 |demosystem  |

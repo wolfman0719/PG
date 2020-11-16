@@ -5,14 +5,15 @@ services:
     build:
       context: ./build
       args:
-        COMMIT_ID: ${COMMIT_ID}
+        COMMIT_ID: irispg
     image: wolfman0719/irispg:demo
+    container_name: irispg
     init: true
     hostname: myiris
     
     ports:
     # superserver default port 
-    - "51779:51773"
+    - "51779:1972"
     # webserver/management portal port
     - "52779:52773"
     
