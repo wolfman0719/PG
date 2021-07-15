@@ -1,0 +1,34 @@
+
+zn "%SYS"
+
+Do ##class(Security.Users).UnExpireUserPasswords("*")
+Do ##class(Config.NLS.Locales).Install("jpuw")
+Do ##class(%EnsembleMgr).EnableNamespace("USER")
+set sec = ##class("Security.Applications").%OpenId("/csp/user")
+set sec.DeepSeeEnabled = 1
+set sec.iKnowEnabled = 1
+set status = sec.%Save()
+set sec = ##class("Security.Applications").%New()
+set sec.Name = "/pm"
+set sec.NameSpace = "USER"
+set sec.DispatchClass ="PM.Broker"
+set sec.AutheEnabled = 32
+set status = sec.%Save()
+Do ##class(%EnsembleMgr).EnableNamespace("USER")
+
+zn "USER"
+
+set io = ##class(%SYS.NLS.Device).SetIO("UTF8")
+Do $system.OBJ.ImportDir("/intersystems/iris/utility/",,"ck",,1)
+zpm "install restforms2"
+zpm "install restforms2-ui"
+Do $system.OBJ.ImportDir("/intersystems/iris/PM/",,"ck",,1)
+Do $system.OBJ.ImportDir("/intersystems/iris/Form/",,"ck",,1)
+Set ^%SYS("sql","sys","week ISO8601") = 1
+do ##class(PM.SetUp).Import("/intersystems/iris/solution/ken_all.csv")
+do ##class(PM.SetUp).PopulateBasics()
+do ##class(PM.SetUp).PopulateRelations()
+do ##class(PM.SetUp).PopulateTransactions(1000)
+do ##class(%DeepSee.Utils).%BuildCube("ProjectCube")
+set ^UnitTestRoot = "/intersystems/iris/UnitTests"
+halt

@@ -1,15 +1,12 @@
-version: '3.7'
+version: '3.6'
 #
 services:
   irissvc:
     build:
-      context: ./build
-      args:
-        COMMIT_ID: irispg
-    image: wolfman0719/irispg:demo
+      context: .
+      dockerfile: Dockerfile
     container_name: irispg
-    init: true
-    hostname: myiris
+    restart: always
     
     ports:
     # superserver default port 
