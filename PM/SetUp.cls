@@ -186,4 +186,31 @@ ClassMethod Import(pFileName As %String) As %Status [ SqlProc ]
   quit $$$OK
 }
 
+ClassMethod SetupLocal(pDir As %String) As %Status
+{
+    set status = $$$OK
+    set os = $system.Version.GetOS()
+  
+    if os = "Windows" {
+      set delim = "\"
+    }
+    else {
+	  set delim = "/"
+    }
+
+   Do $system.OBJ.ImportDir(pDir_delim_"utility",,"ck",,1)
+   zpm "install restforms2"
+   zpm "install restforms2-ui"
+   Do $system.OBJ.ImportDir(pDir_delim_"PM",,"ck",,1)
+   Do $system.OBJ.ImportDir(pDir_delim_"Form",,"ck",,1)
+   Set ^%SYS("sql","sys","week ISO8601") = 1
+   do ##class(PM.SetUp).Import(pDir_delim_"solution"_delim_"ken_all.csv")
+   do ##class(PM.SetUp).PopulateBasics()
+   do ##class(PM.SetUp).PopulateRelations()
+   do ##class(PM.SetUp).PopulateTransactions(1000)
+   do ##class(%DeepSee.Utils).%BuildCube("ProjectCube")
+   //set ^UnitTestRoot = "/intersystems/iris/UnitTests"  
+   quit status
+}
+
 }
