@@ -198,6 +198,12 @@ ClassMethod SetupLocal(pDir As %String) As %Status
 	  set delim = "/"
     }
 
+   do ##class(PM.Activity).%KillExtent()
+   do ##class(PM.Customer).%KillExtent()
+   do ##class(PM.Person).%KillExtent()
+   do ##class(PM.Party).%KillExtent()
+   do ##class(PM.Phase).%KillExtent()
+   do ##class(PM.Project).%KillExtent()
    Do $system.OBJ.ImportDir(pDir_delim_"utility",,"ck",,1)
    zpm "install restforms2"
    zpm "install restforms2-ui"
