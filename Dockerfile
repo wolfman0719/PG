@@ -10,8 +10,7 @@ USER root
         
 ENV ISC_TEMP_DIR=/intersystems/iris/
 # WORKDIR /opt/irisapp
-# RUN chown ${ISC_PACKAGE_MGRUSER}:${ISC_PACKAGE_IRISGROUP} /opt/irisapp
-RUN chown ${ISC_PACKAGE_MGRUSER}:${ISC_PACKAGE_IRISGROUP} /irisdev/app
+# RUN chown ${ISC_PACKAGE_MGRUSER}:${ISC_PACKAGE_IRISGROUP} /opt/irisap
 
 RUN pip3 install openpyxl
 RUN pip3 install pandas
