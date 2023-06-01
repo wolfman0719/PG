@@ -198,17 +198,17 @@ ClassMethod SetupLocal(pDir As %String) As %Status
 	  set delim = "/"
     }
 
+   Do $system.OBJ.ImportDir(pDir_delim_"utility",,"ck",,1)
+   zpm "install restforms2"
+   zpm "install restforms2-ui"
+   Do $system.OBJ.ImportDir(pDir_delim_"PM",,"ck",,1)
+   Do $system.OBJ.ImportDir(pDir_delim_"Form",,"ck",,1)
    do ##class(PM.Activity).%KillExtent()
    do ##class(PM.Customer).%KillExtent()
    do ##class(PM.Person).%KillExtent()
    do ##class(PM.Party).%KillExtent()
    do ##class(PM.Phase).%KillExtent()
    do ##class(PM.Project).%KillExtent()
-   Do $system.OBJ.ImportDir(pDir_delim_"utility",,"ck",,1)
-   zpm "install restforms2"
-   zpm "install restforms2-ui"
-   Do $system.OBJ.ImportDir(pDir_delim_"PM",,"ck",,1)
-   Do $system.OBJ.ImportDir(pDir_delim_"Form",,"ck",,1)
    Set ^%SYS("sql","sys","week ISO8601") = 1
    do ##class(PM.SetUp).Import(pDir_delim_"solution"_delim_"ken_all.csv")
    do ##class(PM.SetUp).PopulateBasics()
