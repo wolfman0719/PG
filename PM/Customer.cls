@@ -1,20 +1,12 @@
-Class PM.Customer Extends (%Persistent, %Populate, %JSON.Adaptor, Form.Adaptor)
+Class PM.Customer Extends (%Persistent, %Populate, %JSON.Adaptor)
 {
-
-Parameter FORMNAME = "Customer";
-
-Parameter OBJPERMISSIONS As %String = "CRUD";
-
-Parameter DISPLAYPROPERTY As %String = "Name";
-
-Parameter FORMORDERBY As %String = "Name";
 
 /******************************************************************************
 Id:  PM.Customer.cls#1
 説明： 顧客情報
 ******************************************************************************/
 /// 名前
-Property Name As %String(POPSPEC = "##class(PM.PopulateUtils).Company()", DISPLAYNAME = "Name");
+Property Name As %String(POPSPEC = "##class(PM.PopulateUtils).Company()");
 
 /// 住所
 Property Address As Address;
