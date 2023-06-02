@@ -199,8 +199,6 @@ ClassMethod SetupLocal(pDir As %String) As %Status
     }
 
    Do $system.OBJ.ImportDir(pDir_delim_"utility",,"ck",,1)
-   zpm "install restforms2"
-   zpm "install restforms2-ui"
    Do $system.OBJ.ImportDir(pDir_delim_"PM",,"ck",,1)
    Do $system.OBJ.ImportDir(pDir_delim_"Form",,"ck",,1)
    do ##class(PM.Activity).%KillExtent()
