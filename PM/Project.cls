@@ -1,15 +1,7 @@
 Include PM
 
-Class PM.Project Extends (%Persistent, %Populate, %JSON.Adaptor, Form.Adaptor)
+Class PM.Project Extends (%Persistent, %Populate, %JSON.Adaptor)
 {
-
-Parameter FORMNAME = "Project";
-
-Parameter OBJPERMISSIONS As %String = "CRUD";
-
-Parameter DISPLAYPROPERTY As %String = "Name";
-
-Parameter FORMORDERBY As %String = "Name";
 
 /******************************************************************************
 Id:  PM.Project.cls#1
