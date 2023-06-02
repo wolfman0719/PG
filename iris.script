@@ -20,8 +20,6 @@ zn "USER"
 
 set io = ##class(%SYS.NLS.Device).SetIO("UTF8")
 Do $system.OBJ.ImportDir("/intersystems/iris/utility/",,"ck",,1)
-zpm "install restforms2"
-zpm "install restforms2-ui"
 Do $system.OBJ.ImportDir("/intersystems/iris/PM/",,"ck",,1)
 Do $system.OBJ.ImportDir("/intersystems/iris/Form/",,"ck",,1)
 Set ^%SYS("sql","sys","week ISO8601") = 1
