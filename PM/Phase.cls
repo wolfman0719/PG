@@ -1,13 +1,5 @@
-Class PM.Phase Extends (%Persistent, %Populate, %JSON.Adaptor, Form.Adaptor)
+Class PM.Phase Extends (%Persistent, %Populate, %JSON.Adaptor)
 {
-
-Parameter FORMNAME = "Phase";
-
-Parameter OBJPERMISSIONS As %String = "CRUD";
-
-Parameter DISPLAYPROPERTY As %String = "Name";
-
-Parameter FORMORDERBY As %String = "Name";
 
 /******************************************************************************
 Id:  PM.Phase.cls#1
