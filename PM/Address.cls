@@ -1,29 +1,21 @@
-Class PM.Address Extends (%SerialObject, %Populate, %JSON.Adaptor, Form.Adaptor) [ Inheritance = right ]
+Class PM.Address Extends (%SerialObject, %Populate, %JSON.Adaptor) [ Inheritance = right ]
 {
-
-Parameter FORMNAME = "Address";
-
-Parameter OBJPERMISSIONS As %String = "CRUD";
-
-Parameter DISPLAYPROPERTY As %String = "Zipcode";
-
-Parameter FORMORDERBY As %String = "Zipcode";
 
 /******************************************************************************
 Id:  PM.Address.cls#1
 説明： 住所（埋め込みオブジェクト）
 ******************************************************************************/
 /// 郵便番号
-Property Zipcode As %String(DISPLAYNAME = "Zipcode");
+Property Zipcode As %String;
 
 /// 県名
-Property Prefecture As %String(DISPLAYNAME = "Prefecture");
+Property Prefecture As %String;
 
 /// 都市名
-Property City As %String(DISPLAYNAME = "City");
+Property City As %String;
 
 /// 町名番地
-Property Street As %String(DISPLAYNAME = "Street");
+Property Street As %String;
 
 Method OnPopulate() As %Status
 {
