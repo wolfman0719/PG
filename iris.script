@@ -12,7 +12,7 @@ set sec = ##class("Security.Applications").%New()
 set sec.Name = "/pm"
 set sec.NameSpace = "USER"
 set sec.DispatchClass ="PM.Broker"
-set sec.AutheEnabled = 32
+set sec.AutheEnabled = 96
 set status = sec.%Save()
 Do ##class(%EnsembleMgr).EnableNamespace("USER")
 
