@@ -21,10 +21,10 @@ IRIS実践プログラミングガイドDocker Build
 
 ## ローカルセットアップ
 
-* `>set inc = c:\git\pg\PM\PM.inc`
+* `>set inc = "c:\git\pg\PM\PM.inc"`
 * `>write $system.OBJ.Load(inc)`
-* `>set file = c:\git\pg\PM\SetUp.cls`
+* `>set file = "c:\git\pg\PM\SetUp.cls"`
 * `>write $system.OBJ.Load(file,"ck")`
-* `>set dir = c:\git\pg`
+* `>set dir = "c:\git\pg"`
 * `>write ##class(PM.SetUp).SetupLocal(dir)`
 
