@@ -3,6 +3,8 @@ Class PM.Broker Extends %CSP.REST
 
 Parameter CONVERTINPUTSTREAM = 1;
 
+Parameter HandleCorsRequest = 1;
+
 XData UrlMap
 {
 <Routes>
