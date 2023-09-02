@@ -198,9 +198,18 @@ ClassMethod SetupLocal(pDir As %String) As %Status
 	  set delim = "/"
     }
 
+   set namespace = $namespace
+   set $namespace = "%SYS"
+   set sec = ##class("Security.Applications").%New()
+   set sec.Name = "/api/pm"
+   set sec.NameSpace = namespace
+   set sec.DispatchClass ="PM.Broker"
+   set sec.AutheEnabled = 96
+   set status = sec.%Save()
+   set $namespace = namespace
+
    Do $system.OBJ.ImportDir(pDir_delim_"utility",,"ck",,1)
    Do $system.OBJ.ImportDir(pDir_delim_"PM",,"ck",,1)
-   Do $system.OBJ.ImportDir(pDir_delim_"Form",,"ck",,1)
    do ##class(PM.Activity).%KillExtent()
    do ##class(PM.Customer).%KillExtent()
    do ##class(PM.Person).%KillExtent()
