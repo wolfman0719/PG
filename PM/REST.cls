@@ -5,7 +5,12 @@ ClassMethod GetActivities() As %Status
 {
 	set sts=$$$OK
 
-    try {
+	if $data(%request) {
+        set %response.ContentType="application/json"
+	      set %response.CharSet = "utf-8"
+	 }
+
+  try {
 	    set statement1 = ##class(%SQL.Statement).%New()
 	    set sql1 = "SELECT MEMBER->NAME AS NAME,SUM(HOURS) AS TOTALHOURS FROM PM.ACTIVITY WHERE MEMBER->USERNAME = '_system' GROUP BY MEMBER->NAME"
         set qstatus = statement1.%Prepare(sql1)
@@ -77,7 +82,11 @@ ClassMethod GetActivities2() As %Status
 ClassMethod GetMember(pId As %Integer) As %Status
 {
 	set sts=$$$OK
-	set ^pid = $get(pId)
+
+     if $data(%request) {
+        set %response.ContentType="application/json"
+	      set %response.CharSet = "utf-8"
+	 }
     try {
 	  set member = ##class(PM.Member).%OpenId(pId,,.status)
 	  if '$isobject(member) {
@@ -98,6 +107,10 @@ ClassMethod GetMember(pId As %Integer) As %Status
 ClassMethod GetProjects() As %Status
 {
 	set sts=$$$OK
+	if $data(%request) {
+        set %response.ContentType="application/json"
+	      set %response.CharSet = "utf-8"
+	 }
     try {
 	    set statement = ##class(%SQL.Statement).%New()
 	    set sql = "select id,name from pm.project"
@@ -126,6 +139,10 @@ ClassMethod GetProjects() As %Status
 ClassMethod GetPhases() As %Status
 {
 	set sts=$$$OK
+	if $data(%request) {
+        set %response.ContentType="application/json"
+	      set %response.CharSet = "utf-8"
+	 }
     try {
 	    set statement = ##class(%SQL.Statement).%New()
 	    set sql = "select id,name from pm.phase"
@@ -154,6 +171,10 @@ ClassMethod GetPhases() As %Status
 ClassMethod GetYearWeeks(pWeeks As %Integer) As %Status
 {
 	set sts=$$$OK
+	if $data(%request) {
+        set %response.ContentType="application/json"
+	      set %response.CharSet = "utf-8"
+	 }
     try {
 	    set array =[]
 	    set today =$piece($h,",",1)
@@ -178,6 +199,10 @@ ClassMethod GetYearWeeks(pWeeks As %Integer) As %Status
 ClassMethod CreateActivityRecord() As %Status
 {
 
+	if $data(%request) {
+        set %response.ContentType="application/json"
+	      set %response.CharSet = "utf-8"
+	 }
 	Try {
 		
 	    if $data(%request) {
