@@ -100,7 +100,7 @@ ClassMethod GetProjects() As %Status
 	set sts=$$$OK
     try {
 	    set statement = ##class(%SQL.Statement).%New()
-	    set sql = "select name from pm.project"
+	    set sql = "select id,name from pm.project"
         set qstatus = statement.%Prepare(sql)
         if qstatus'=$$$OK {
 	      $$$ThrowStatus(qstatus)
@@ -110,7 +110,8 @@ ClassMethod GetProjects() As %Status
 
         while rset.%Next() {
 	      set dobj = {}
-          set dobj.Name = rset.NAME
+		  set dobj.id = rset.ID
+          set dobj.name = rset.NAME
           do projects.%Push(dobj)
 	    
         } 
@@ -127,7 +128,7 @@ ClassMethod GetPhases() As %Status
 	set sts=$$$OK
     try {
 	    set statement = ##class(%SQL.Statement).%New()
-	    set sql = "select name from pm.phase"
+	    set sql = "select id,name from pm.phase"
         set qstatus = statement.%Prepare(sql)
         if qstatus'=$$$OK {
 	      $$$ThrowStatus(qstatus)
@@ -137,7 +138,8 @@ ClassMethod GetPhases() As %Status
 
         while rset.%Next() {
 	      set dobj = {}
-          set dobj.Name = rset.NAME
+		  set dobj.id = rset.ID
+          set dobj.name = rset.NAME
           do phases.%Push(dobj)
 	    
         } 
