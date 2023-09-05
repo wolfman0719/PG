@@ -10,9 +10,9 @@ services:
     command: --check-caps false
     ports:
     # superserver default port 
-    - "51779:1972"
+    - "51773:1972"
     # webserver/management portal port
-    - "52779:52773"
+    - "52773:52773"
     volumes:
       - ./:/irisdev/app    
     environment:
