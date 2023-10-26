@@ -1,9 +1,9 @@
 # PG
 
-IRIS実践プログラミングガイドDocker Build
+IRIS実践プログラミングガイド
 
 
-## ビルドプロセス
+## Dockerビルドプロセス
 
 ### Build & Run
 * `docker-compose up -d --build`
@@ -19,7 +19,7 @@ IRIS実践プログラミングガイドDocker Build
 |システムログイン |_system    |
 |パスワード　	 |SYS  |
 
-## ローカルセットアップ
+## ローカルセットアップ（WindowsやMacOS上にインストールしたIRISを使用してセットアップする）
 
 ```
 >set inc = "c:\git\pg\PM\PM.inc"
