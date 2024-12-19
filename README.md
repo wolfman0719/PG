@@ -29,3 +29,13 @@ IRIS実践プログラミングガイド
 >set dir = "c:\git\pg"
 >write ##class(PM.SetUp).SetupLocal(dir)
 ```
+
+### pythonでエクセルファイルを操作するため以下のライブラリーをインストールする
+
+（UNIX系の場合は、python3コマンドを使用）
+
+```
+python -m pip install --target /InterSystems/IRIS/mgr/python xlrd
+python -m pip install --target /InterSystems/IRIS/mgr/python openpyxl
+python -m pip install --target /InterSystems/IRIS/mgr/python pandas
+```
