@@ -20,12 +20,12 @@ Property HourlyWages As %Integer(POPSPEC = "##class(PM.PopulateUtils).Wage()");
 /// データを自動生成
 ClassMethod Init(pNum As %Integer)
 {
-	Set testmember = ..%New()
-	Set testmember.Username = "_system"
-	Set testmember.Name = "テストユーザー"
-	Set testmember.HourlyWages = 20000
-	Set tS = testmember.%Save()
-	Do ..Populate(pNum)
+  Set testmember = ..%New()
+  Set testmember.Username = "_system"
+  Set testmember.Name = "テストユーザー"
+  Set testmember.HourlyWages = 20000
+  Set tS = testmember.%Save()
+  Do ..Populate(pNum)
 }
 
 Storage Default
