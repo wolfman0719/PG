@@ -17,8 +17,8 @@ Relationship Projects As PM.Project [ Cardinality = many, Inverse = Customer ];
 /// テストデータ生成用メソッド
 ClassMethod Init(pNum As %Integer)
 {
-	//Do ..%KillExtent()
-	Do ..Populate(pNum)
+  //Do ..%KillExtent()
+  Do ..Populate(pNum)
 }
 
 Storage Default
