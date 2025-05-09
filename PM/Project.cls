@@ -51,59 +51,59 @@ Index ProjectManagerIndex On ProjectManager;
 /// データ自動生成処理
 ClassMethod Init(pNP As %Integer) As %Status
 {
-	Try {
-	  //Do ..%KillExtent()
-	  For i = 1:1:pNP {
-		  Set Project = ..%New()
-		  Set Project.Completed = 0
-		  Set Project.StartDate = +$Horolog - $R(1000)
-		  Set Project.DueDate = Project.StartDate + $Random(1000)
-		  Set Project.Name = ##class(PM.PopulateUtils).Project()
-		  Set Project.OrderAmount = 100000 * $Random(1000)
-		  Set Project.AnticipatedManHours = Project.OrderAmount / 3000
-		  Set tSC = Project.%Save()
-		  If $$$ISERR(tSC) $$$ThrowStatus(tSC)
-	}
-	}
-	Catch tE {
-		Set tSC2 = ##class(PM.Error).StoreErrorInformation(tE)
-	}
-	Quit tSC
+  Try {
+    //Do ..%KillExtent()
+    For i = 1:1:pNP {
+      Set Project = ..%New()
+      Set Project.Completed = 0
+      Set Project.StartDate = +$Horolog - $R(1000)
+      Set Project.DueDate = Project.StartDate + $Random(1000)
+      Set Project.Name = ##class(PM.PopulateUtils).Project()
+      Set Project.OrderAmount = 100000 * $Random(1000)
+      Set Project.AnticipatedManHours = Project.OrderAmount / 3000
+      Set tSC = Project.%Save()
+      If $$$ISERR(tSC) $$$ThrowStatus(tSC)
+    }
+  }
+  Catch tE {
+    Set tSC2 = ##class(PM.Error).StoreErrorInformation(tE)
+  }
+  Quit tSC
 }
 
 /// 実工数計算
 ClassMethod ActualManHours(pId As %Integer) As %Integer
 {
-	Set Project = ..%OpenId(pId)
-	Set ActualManHours = 0
-	For i = 1:1:Project.Activities.Count() {
-		Set Activity = Project.Activities.GetAt(i)
-		Set ActualManHours = ActualManHours + Activity.Hours
-	}
-	Quit ActualManHours
+  Set Project = ..%OpenId(pId)
+  Set ActualManHours = 0
+  For i = 1:1:Project.Activities.Count() {
+    Set Activity = Project.Activities.GetAt(i)
+    Set ActualManHours = ActualManHours + Activity.Hours
+  }
+  Quit ActualManHours
 }
 
 /// 実費用計算
 ClassMethod ActualAmount(pId As %Integer) As %Integer
 {
-	Set Project = ..%OpenId(pId)
-	Set ActualAmount = 0
-	For i = 1:1:Project.Activities.Count() {
-		Set Activity = Project.Activities.GetAt(i)
-		Set Member = Activity.Member
-		Set ClassName = Member.%ClassName()
-		If (ClassName = "Member") {
-		    Set ActualAmount = ActualAmount + (Activity.Hours * Member.HourlyWages)
-		}
-		ElseIf (ClassName = "Manager") {
-			Set tHours = Activity.Hours 
-			If ( tHours > ($$$MonthlyHours \ $$$ManagedProjectNo)) {
-				Set tHours = $$$MonthlyHours \ $$$ManagedProjectNo
-			}
-		    Set ActualAmount = ActualAmount + ($Normalize((tHours / $$$MonthlyHours) * Member.MonthlyManagementFee,0))
-		}
-	}
-	Quit ActualAmount
+  Set Project = ..%OpenId(pId)
+  Set ActualAmount = 0
+  For i = 1:1:Project.Activities.Count() {
+    Set Activity = Project.Activities.GetAt(i)
+    Set Member = Activity.Member
+    Set ClassName = Member.%ClassName()
+    If (ClassName = "Member") {
+      Set ActualAmount = ActualAmount + (Activity.Hours * Member.HourlyWages)
+    }
+    ElseIf (ClassName = "Manager") {
+      Set tHours = Activity.Hours 
+      If ( tHours > ($$$MonthlyHours \ $$$ManagedProjectNo)) {
+        Set tHours = $$$MonthlyHours \ $$$ManagedProjectNo
+      }
+      Set ActualAmount = ActualAmount + ($Normalize((tHours / $$$MonthlyHours) * Member.MonthlyManagementFee,0))
+    }
+  }
+  Quit ActualAmount
 }
 
 Storage Default
