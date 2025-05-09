@@ -15,31 +15,31 @@ Property MyId As %Integer;
 /// Provide localized text strings for use in the form.
 Method %OnGetJSResources(ByRef pResources As %String) As %Status [ Private ]
 {
- Set pResources("SuccessSaveRecord") = $$$Text("Record saved.")
- Set pResources("NothingRecord") = $$$Text("Enter an ID value. To view a list of IDs click Search.")
- Set pResources("NoExistRecord") = $$$Text("No record with this ID exists. To view a list of valid IDs click Search.") 
- Set pResources("ConfirmDelete") = $$$Text("Are you sure you want to delete this record? You cannot undo this operation.") 
- Set pResources("FailedDelete") = $$$Text("Record was not deleted.") 
- Set pResources("SuccessDelete") = $$$Text("Record deleted.") 
- Set pResources("LabelHide") = $$$Text("Hide")
- Set pResources("LabelTitleHide") = $$$Text("Hide display of current records")
- Set pResources("LabelSearch") = $$$Text("Search")
- Set pResources("LabelTitleHide") = $$$Text("Find all records")
- Set pResources("FailedDataValidation") = $$$Text("Some data was incorrect or incomplete. Please try again. To view tips for entering the correct data format for a field, hover the cursor over the field (or its title) and wait for a tooltip to display"_ $c(13,10,13,10)) 
+   Set pResources("SuccessSaveRecord") = $$$Text("Record saved.")
+   Set pResources("NothingRecord") = $$$Text("Enter an ID value. To view a list of IDs click Search.")
+   Set pResources("NoExistRecord") = $$$Text("No record with this ID exists. To view a list of valid IDs click Search.") 
+   Set pResources("ConfirmDelete") = $$$Text("Are you sure you want to delete this record? You cannot undo this operation.") 
+   Set pResources("FailedDelete") = $$$Text("Record was not deleted.") 
+   Set pResources("SuccessDelete") = $$$Text("Record deleted.") 
+   Set pResources("LabelHide") = $$$Text("Hide")
+   Set pResources("LabelTitleHide") = $$$Text("Hide display of current records")
+   Set pResources("LabelSearch") = $$$Text("Search")
+   Set pResources("LabelTitleHide") = $$$Text("Find all records")
+   Set pResources("FailedDataValidation") = $$$Text("Some data was incorrect or incomplete. Please try again. To view tips for entering the correct data format for a field, hover the cursor over the field (or its title) and wait for a tooltip to display"_ $c(13,10,13,10)) 
  
- Set pResources("FailedStringName") = $$$Text("Name was too short or too long."_$c(13,10))
+   Set pResources("FailedStringName") = $$$Text("Name was too short or too long."_$c(13,10))
  
- Quit $$$OK
+   Quit $$$OK
 }
 
 ClassMethod ModelIdExists(modelId As %String) As %Boolean [ ZenMethod ]
 {
- if ($classmethod("PM.Phase","%ExistsId",modelId)) {
-  Quit 1
- }
- else {
-  Quit 0
- }
+  if ($classmethod("PM.Phase","%ExistsId",modelId)) {
+    Quit 1
+  }
+  else {
+   Quit 0
+  }
 }
 
 ClientMethod deleteRec() As %Status [ Language = javascript ]
