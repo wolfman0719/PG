@@ -19,13 +19,13 @@ Property Street As %String;
 
 Method OnPopulate() As %Status
 {
-	Set id=$R($Get(^PM.YubinDataD))+1
-	Set yubin = ##class(PM.YubinData).%OpenId(id)
-	Set ..Zipcode=yubin.ZipCode
-	Set ..Prefecture=yubin.Ken
-	Set ..City=yubin.Toshi
-	Set ..Street=yubin.Cyou
-	QUIT $$$OK
+  Set id=$R($Get(^PM.YubinDataD))+1
+  Set yubin = ##class(PM.YubinData).%OpenId(id)
+  Set ..Zipcode=yubin.ZipCode
+  Set ..Prefecture=yubin.Ken
+  Set ..City=yubin.Toshi
+  Set ..Street=yubin.Cyou
+  QUIT $$$OK
 }
 
 Storage Default
