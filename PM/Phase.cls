@@ -14,12 +14,12 @@ Index NameIndex On Name;
 /// 　データ生成
 ClassMethod Init()
 {
-	//Do ..%KillExtent()
-	&sql(insert into PM.PHASE (NAME) VALUES ('要件定義'))
-	&sql(insert into PM.PHASE (NAME) VALUES ('詳細設計'))
-	&sql(insert into PM.PHASE (NAME) VALUES ('製造・単体テスト'))
-	&sql(insert into PM.PHASE (NAME) VALUES ('結合テスト'))
-	&sql(insert into PM.PHASE (NAME) VALUES ('検収'))
+  //Do ..%KillExtent()
+  &sql(insert into PM.PHASE (NAME) VALUES ('要件定義'))
+  &sql(insert into PM.PHASE (NAME) VALUES ('詳細設計'))
+  &sql(insert into PM.PHASE (NAME) VALUES ('製造・単体テスト'))
+  &sql(insert into PM.PHASE (NAME) VALUES ('結合テスト'))
+  &sql(insert into PM.PHASE (NAME) VALUES ('検収'))
 }
 
 Storage Default
