@@ -15,22 +15,22 @@ Relationship ManagedOrganizations As PM.Organization [ Cardinality = many, Inver
 /// データを自動生成
 ClassMethod Init(pNM As %Integer) As %Status
 {
-	Set tSC = $$$OK
-	Try {
-	  //Do ..%DeleteExtent()
-	  For i = 1:1:pNM {
-		  Set Manager = ..%New()
-		  Set Manager.Name = ##class(PM.PopulateUtils).Name()
-		  Set Manager.MonthlyManagementFee = ($Random(100) * 10000) + 500000
-		  set Manager.Username = ##class(%PopulateUtils).String(20)
-		  Set tSC = Manager.%Save()
-		  If $$$ISERR(tSC) $$$ThrowStatus(tSC)
-	  }
-	}
-	Catch tE {
-		Set tSC2 = ##class(PM.Error).StoreErrorInformation(tE)
-	}
-	Quit tSC
+  Set tSC = $$$OK
+  Try {
+    //Do ..%DeleteExtent()
+    For i = 1:1:pNM {
+      Set Manager = ..%New()
+      Set Manager.Name = ##class(PM.PopulateUtils).Name()
+      Set Manager.MonthlyManagementFee = ($Random(100) * 10000) + 500000
+      set Manager.Username = ##class(%PopulateUtils).String(20)
+      Set tSC = Manager.%Save()
+      If $$$ISERR(tSC) $$$ThrowStatus(tSC)
+    }
+  }
+  Catch tE {
+    Set tSC2 = ##class(PM.Error).StoreErrorInformation(tE)
+  }
+  Quit tSC
 }
 
 Storage Default
