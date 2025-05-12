@@ -10,172 +10,172 @@ Id:  PM.SetUp.cls#1
 /// 基本的なデータを自動性する
 ClassMethod PopulateBasics()
 {
-	do ##class(PM.Project).%KillExtent()
-	do ##class(PM.Party).%KillExtent()
-	do ##class(PM.Customer).%KillExtent()
-	do ##class(PM.Phase).%KillExtent()
-	Do ##class(PM.Customer).Init(10)
-	DO ##class(PM.Phase).Init()
-	Do ##class(PM.Organization).Init()
-	&sql(select count(*) into :ON from PM.ORGANIZATION)
-	Do ##class(PM.Manager).Init(ON)
-	Do ##class(PM.Member).Init(ON * 5)
-	Set tSC = ##class(PM.Project).Init(30)
+  do ##class(PM.Project).%KillExtent()
+  do ##class(PM.Party).%KillExtent()
+  do ##class(PM.Customer).%KillExtent()
+  do ##class(PM.Phase).%KillExtent()
+  Do ##class(PM.Customer).Init(10)
+  DO ##class(PM.Phase).Init()
+  Do ##class(PM.Organization).Init()
+  &sql(select count(*) into :ON from PM.ORGANIZATION)
+  Do ##class(PM.Manager).Init(ON)
+  Do ##class(PM.Member).Init(ON * 5)
+  Set tSC = ##class(PM.Project).Init(30)
 }
 
 /// リレーションシップを設定する
 ClassMethod PopulateRelations() As %Status
 {
-	Try {
+  Try {
 	
-	  Set tSC = $$$OK
+    Set tSC = $$$OK
 	  
-	  &sql(select count(*) into :PN from PM.PROJECT)
+    &sql(select count(*) into :PN from PM.PROJECT)
 	
-	  For i = 1 : 1 : PN {
-		  Set Project = ##class(PM.Project).%OpenId(i)
-		  &sql(select count(*) into :CN from PM.CUSTOMER)
-		  Set tCN = $Random(CN) + 1
-		  Set Customer = ##class(PM.Customer).%OpenId(tCN)
-		  Do Customer.Projects.Insert(Project)
-		  Set tSC = Customer.%Save()
-		  If $$$ISERR(tSC) $$$ThrowStatus(tSC)
-	  }
+    For i = 1 : 1 : PN {
+      Set Project = ##class(PM.Project).%OpenId(i)
+      &sql(select count(*) into :CN from PM.CUSTOMER)
+      Set tCN = $Random(CN) + 1
+      Set Customer = ##class(PM.Customer).%OpenId(tCN)
+      Do Customer.Projects.Insert(Project)
+      Set tSC = Customer.%Save()
+      If $$$ISERR(tSC) $$$ThrowStatus(tSC)
+    }
 	  
-	  Set Division = ##class(PM.Organization).%OpenId(1)
+    Set Division = ##class(PM.Organization).%OpenId(1)
 
-	  Set Department1 = ##class(PM.Organization).%OpenId(2)
-	  Set Department2 = ##class(PM.Organization).%OpenId(5)
-	  Set Department3 = ##class(PM.Organization).%OpenId(9)
-	  Set Department4 = ##class(PM.Organization).%OpenId(11)
-	  Set Department5 = ##class(PM.Organization).%OpenId(15)
+    Set Department1 = ##class(PM.Organization).%OpenId(2)
+    Set Department2 = ##class(PM.Organization).%OpenId(5)
+    Set Department3 = ##class(PM.Organization).%OpenId(9)
+    Set Department4 = ##class(PM.Organization).%OpenId(11)
+    Set Department5 = ##class(PM.Organization).%OpenId(15)
 
-	  Do Division.Members.Insert(Department1)
-	  Do Division.Members.Insert(Department2)
-	  Do Division.Members.Insert(Department3)
-	  Do Division.Members.Insert(Department4)
-	  Do Division.Members.Insert(Department5)
+    Do Division.Members.Insert(Department1)
+    Do Division.Members.Insert(Department2)
+    Do Division.Members.Insert(Department3)
+    Do Division.Members.Insert(Department4)
+    Do Division.Members.Insert(Department5)
 
-	  Set Section1 = ##class(PM.Organization).%OpenId(3)
-	  Set Section2 = ##class(PM.Organization).%OpenId(4)
+    Set Section1 = ##class(PM.Organization).%OpenId(3)
+    Set Section2 = ##class(PM.Organization).%OpenId(4)
 	  
-	  Do Department1.Members.Insert(Section1)
-	  Do Department1.Members.Insert(Section2)
+    Do Department1.Members.Insert(Section1)
+    Do Department1.Members.Insert(Section2)
 
-	  Set Section3 = ##class(PM.Organization).%OpenId(6)
-	  Set Section4 = ##class(PM.Organization).%OpenId(7)
-	  Set Section5 = ##class(PM.Organization).%OpenId(8)
+    Set Section3 = ##class(PM.Organization).%OpenId(6)
+    Set Section4 = ##class(PM.Organization).%OpenId(7)
+    Set Section5 = ##class(PM.Organization).%OpenId(8)
 	  
-	  Do Department2.Members.Insert(Section3)
-	  Do Department2.Members.Insert(Section4)
-	  Do Department2.Members.Insert(Section5)
+    Do Department2.Members.Insert(Section3)
+    Do Department2.Members.Insert(Section4)
+    Do Department2.Members.Insert(Section5)
 
-	  Set Section6 = ##class(PM.Organization).%OpenId(10)
+    Set Section6 = ##class(PM.Organization).%OpenId(10)
 
-	  Do Department3.Members.Insert(Section6)
+    Do Department3.Members.Insert(Section6)
 
-	  Set Section7 = ##class(PM.Organization).%OpenId(12)
-	  Set Section8 = ##class(PM.Organization).%OpenId(13)
-	  Set Section9 = ##class(PM.Organization).%OpenId(14)
+    Set Section7 = ##class(PM.Organization).%OpenId(12)
+    Set Section8 = ##class(PM.Organization).%OpenId(13)
+    Set Section9 = ##class(PM.Organization).%OpenId(14)
 
-	  Do Department4.Members.Insert(Section7)
-	  Do Department4.Members.Insert(Section8)
-	  Do Department4.Members.Insert(Section9)
+    Do Department4.Members.Insert(Section7)
+    Do Department4.Members.Insert(Section8)
+    Do Department4.Members.Insert(Section9)
 
-	  Set Section10 = ##class(PM.Organization).%OpenId(16)
-	  Set Section11 = ##class(PM.Organization).%OpenId(17)
-	  Set Section12 = ##class(PM.Organization).%OpenId(18)
-	  Set Section13 = ##class(PM.Organization).%OpenId(19)
+    Set Section10 = ##class(PM.Organization).%OpenId(16)
+    Set Section11 = ##class(PM.Organization).%OpenId(17)
+    Set Section12 = ##class(PM.Organization).%OpenId(18)
+    Set Section13 = ##class(PM.Organization).%OpenId(19)
 
-	  Do Department5.Members.Insert(Section10)
-	  Do Department5.Members.Insert(Section11)
-	  Do Department5.Members.Insert(Section12)
-	  Do Department5.Members.Insert(Section13)
+    Do Department5.Members.Insert(Section10)
+    Do Department5.Members.Insert(Section11)
+    Do Department5.Members.Insert(Section12)
+    Do Department5.Members.Insert(Section13)
 	  
-	  Set tSC = Division.%Save()
+    Set tSC = Division.%Save()
 	  
-	  If $$$ISERR(tSC) $$$ThrowStatus(tSC)
+    If $$$ISERR(tSC) $$$ThrowStatus(tSC)
 	  	  
-	  &sql(select count(*) into :MN from PM.Manager)
+    &sql(select count(*) into :MN from PM.Manager)
 	  
-	  For i = 1 : 1 : MN {
-		  // Managerはid　20番から　データ生成数に依存しているのでデータ数を変更した際に動作しなくなる可能性
-		  Set Manager = ##class(PM.Manager).%OpenId(i + 19)
-		  Set Organization = ##class(PM.Organization).%OpenId(i)
-		  Do Manager.ManagedOrganizations.Insert(Organization)
-		  Set tSC = Manager.%Save()
-	      If $$$ISERR(tSC) $$$ThrowStatus(tSC)
-	  }
+    For i = 1 : 1 : MN {
+      // Managerはid　20番から　データ生成数に依存しているのでデータ数を変更した際に動作しなくなる可能性
+      Set Manager = ##class(PM.Manager).%OpenId(i + 19)
+      Set Organization = ##class(PM.Organization).%OpenId(i)
+      Do Manager.ManagedOrganizations.Insert(Organization)
+      Set tSC = Manager.%Save()
+      If $$$ISERR(tSC) $$$ThrowStatus(tSC)
+    }
 	  
-	  &sql(select count(*) into :ON from PM.Organization)
-	  &sql(select count(*) into :MN from PM.Member)
+    &sql(select count(*) into :ON from PM.Organization)
+    &sql(select count(*) into :MN from PM.Member)
 	  
-	  For i = 1 : 1 : MN {
-		  Set Organization = ##class(PM.Organization).%OpenId($Random(ON) + 1)
-		  // memberは39番から データ生成数に依存しているのでデータ数を変更した際に動作しなくなる可能性
-		  Set Member = ##class(PM.Member).%OpenId(i + 38)
-		  Do Organization.Members.Insert(Member)
-		  Set tSC = Organization.%Save()
-	      If $$$ISERR(tSC) $$$ThrowStatus(tSC)
+    For i = 1 : 1 : MN {
+      Set Organization = ##class(PM.Organization).%OpenId($Random(ON) + 1)
+      // memberは39番から データ生成数に依存しているのでデータ数を変更した際に動作しなくなる可能性
+      Set Member = ##class(PM.Member).%OpenId(i + 38)
+      Do Organization.Members.Insert(Member)
+      Set tSC = Organization.%Save()
+      If $$$ISERR(tSC) $$$ThrowStatus(tSC)
 		  
-	  }
+    }
 	  
-	  &sql(select count(*) into :PN from PM.PROJECT)
-	  &sql(select count(*) into :PSN from PM.PARTY)
+    &sql(select count(*) into :PN from PM.PROJECT)
+    &sql(select count(*) into :PSN from PM.PARTY)
 	  
-	  For i = 1 : 1 : PN {
-		  Set Project = ##class(PM.Project).%OpenId(i)
-		  // Personは20番以降　データ生成数に依存しているのでデータ数を変更した際に動作しなくなる可能性
-		  Set Person = ##class(PM.Person).%OpenId($Random(PSN - 19) + 20)
-		  Set Project.ProjectManager = Person
-		  Set tSC = Project.%Save()
-	      If $$$ISERR(tSC) $$$ThrowStatus(tSC)
-	  }
+    For i = 1 : 1 : PN {
+      Set Project = ##class(PM.Project).%OpenId(i)
+      // Personは20番以降　データ生成数に依存しているのでデータ数を変更した際に動作しなくなる可能性
+      Set Person = ##class(PM.Person).%OpenId($Random(PSN - 19) + 20)
+      Set Project.ProjectManager = Person
+      Set tSC = Project.%Save()
+      If $$$ISERR(tSC) $$$ThrowStatus(tSC)
+    }
 
-	}
-	Catch tE {
-		Set tSC2 = ##class(PM.Error).StoreErrorInformation(tE)
-	}
+  }
+  Catch tE {
+    Set tSC2 = ##class(PM.Error).StoreErrorInformation(tE)
+  }
 	
-	Quit tSC
+  Quit tSC
 }
 
 /// アクティビティを自動生成する
 ClassMethod PopulateTransactions(NA As %Integer) As %Status
 {
 	
-	Try {
-	   Set tSC = $$$OK
-	   do ##class(PM.Activity).%KillExtent()
+  Try {
+    Set tSC = $$$OK
+    do ##class(PM.Activity).%KillExtent()
 
-	   &sql(select count(*) into :PN from PM.PARTY)
-	   &sql(select count(*) into :PJN from PM.PROJECT)
-	   &sql(select count(*) into :PHN from PM.PHASE)
+    &sql(select count(*) into :PN from PM.PARTY)
+    &sql(select count(*) into :PJN from PM.PROJECT)
+    &sql(select count(*) into :PHN from PM.PHASE)
 	
-	   For i = 1 : 1 : NA {
-		  Set Activity = ##class(PM.Activity).%New()
-		  Set Activity.Week = $Random($$$NoOfWeeks) + 1
-		  Set Project = ##class(PM.Project).%OpenId($Random(PJN) + 1,,.tSC)
-	      If $$$ISERR(tSC) $$$ThrowStatus(tSC)
-		  Set Activity.Project = Project
-		  Set Activity.Year = 2010 + $Random(5) + 1
-		  Set Phase = ##class(PM.Phase).%OpenId($Random(PHN) + 1,,.tSC)
-	      If $$$ISERR(tSC) $$$ThrowStatus(tSC)
-		  Set Activity.Phase = Phase
-		  // Personは20番以降　データ生成数に依存しているのでデータ数を変更した際に動作しなくなる可能性
-		  Set Person = ##class(PM.Person).%OpenId($Random(PN - 19) + 20,,.tSC)
-	      If $$$ISERR(tSC) $$$ThrowStatus(tSC)
-		  Set Activity.Member = Person
-		  Set Activity.Hours = $Random($$$WeekHours + 30) + 1
-		  Set tSC = Activity.%Save()
-	      If $$$ISERR(tSC) $$$ThrowStatus(tSC)
-	   }
-	}
-	Catch tE {
-		Set tSC2 = ##class(PM.Error).StoreErrorInformation(tE)
-	}
+    For i = 1 : 1 : NA {
+      Set Activity = ##class(PM.Activity).%New()
+      Set Activity.Week = $Random($$$NoOfWeeks) + 1
+      Set Project = ##class(PM.Project).%OpenId($Random(PJN) + 1,,.tSC)
+      If $$$ISERR(tSC) $$$ThrowStatus(tSC)
+        Set Activity.Project = Project
+	Set Activity.Year = 2010 + $Random(5) + 1
+	Set Phase = ##class(PM.Phase).%OpenId($Random(PHN) + 1,,.tSC)
+	If $$$ISERR(tSC) $$$ThrowStatus(tSC)
+	Set Activity.Phase = Phase
+	// Personは20番以降　データ生成数に依存しているのでデータ数を変更した際に動作しなくなる可能性
+	Set Person = ##class(PM.Person).%OpenId($Random(PN - 19) + 20,,.tSC)
+	If $$$ISERR(tSC) $$$ThrowStatus(tSC)
+	Set Activity.Member = Person
+	Set Activity.Hours = $Random($$$WeekHours + 30) + 1
+	Set tSC = Activity.%Save()
+	If $$$ISERR(tSC) $$$ThrowStatus(tSC)
+    }
+  }
+  Catch tE {
+    Set tSC2 = ##class(PM.Error).StoreErrorInformation(tE)
+  }
 
-	Quit tSC
+  Quit tSC
 }
 
 /// 郵便データをロードする
@@ -188,42 +188,42 @@ ClassMethod Import(pFileName As %String) As %Status [ SqlProc ]
 
 ClassMethod SetupLocal(pDir As %String) As %Status
 {
-    set status = $$$OK
-    set os = $system.Version.GetOS()
+  set status = $$$OK
+  set os = $system.Version.GetOS()
   
-    if os = "Windows" {
-      set delim = "\"
-    }
-    else {
-	  set delim = "/"
-    }
+  if os = "Windows" {
+    set delim = "\"
+  }
+  else {
+    set delim = "/"
+  }
 
-   set namespace = $namespace
-   set $namespace = "%SYS"
-   set sec = ##class("Security.Applications").%New()
-   set sec.Name = "/api/pm"
-   set sec.NameSpace = namespace
-   set sec.DispatchClass ="PM.Broker"
-   set sec.AutheEnabled = 96
-   set status = sec.%Save()
-   set $namespace = namespace
+  set namespace = $namespace
+  set $namespace = "%SYS"
+  set sec = ##class("Security.Applications").%New()
+  set sec.Name = "/api/pm"
+  set sec.NameSpace = namespace
+  set sec.DispatchClass ="PM.Broker"
+  set sec.AutheEnabled = 96
+  set status = sec.%Save()
+  set $namespace = namespace
 
-   Do $system.OBJ.ImportDir(pDir_delim_"utility",,"ck",,1)
-   Do $system.OBJ.ImportDir(pDir_delim_"PM",,"ck",,1)
-   do ##class(PM.Activity).%KillExtent()
-   do ##class(PM.Customer).%KillExtent()
-   do ##class(PM.Person).%KillExtent()
-   do ##class(PM.Party).%KillExtent()
-   do ##class(PM.Phase).%KillExtent()
-   do ##class(PM.Project).%KillExtent()
-   Set ^%SYS("sql","sys","week ISO8601") = 1
-   do ##class(PM.SetUp).Import(pDir_delim_"solution"_delim_"ken_all.csv")
-   do ##class(PM.SetUp).PopulateBasics()
-   do ##class(PM.SetUp).PopulateRelations()
-   do ##class(PM.SetUp).PopulateTransactions(1000)
-   do ##class(%DeepSee.Utils).%BuildCube("ProjectCube")
-   //set ^UnitTestRoot = "/intersystems/iris/UnitTests"  
-   quit status
+  Do $system.OBJ.ImportDir(pDir_delim_"utility",,"ck",,1)
+  Do $system.OBJ.ImportDir(pDir_delim_"PM",,"ck",,1)
+  do ##class(PM.Activity).%KillExtent()
+  do ##class(PM.Customer).%KillExtent()
+  do ##class(PM.Person).%KillExtent()
+  do ##class(PM.Party).%KillExtent()
+  do ##class(PM.Phase).%KillExtent()
+  do ##class(PM.Project).%KillExtent()
+  Set ^%SYS("sql","sys","week ISO8601") = 1
+  do ##class(PM.SetUp).Import(pDir_delim_"solution"_delim_"ken_all.csv")
+  do ##class(PM.SetUp).PopulateBasics()
+  do ##class(PM.SetUp).PopulateRelations()
+  do ##class(PM.SetUp).PopulateTransactions(1000)
+  do ##class(%DeepSee.Utils).%BuildCube("ProjectCube")
+  //set ^UnitTestRoot = "/intersystems/iris/UnitTests"  
+  quit status
 }
 
 }
